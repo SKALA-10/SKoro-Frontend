@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   BackgroundElements,
   BrandingSection,
@@ -15,6 +16,7 @@ interface LoginFormData {
 const LoginPage: React.FC = () => {
   useDocumentTitle('로그인 - SKoro')
 
+  const navigate = useNavigate()
   const [formData, setFormData] = useState<LoginFormData>({
     employeeId: '',
     password: '',
@@ -34,6 +36,7 @@ const LoginPage: React.FC = () => {
     alert(
       `🔐 로그인 정보\n사원 번호: ${formData.employeeId}\n비밀번호: ${formData.password}`
     )
+    navigate('/home')
   }
 
   return (

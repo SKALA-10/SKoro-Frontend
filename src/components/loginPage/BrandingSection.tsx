@@ -1,4 +1,4 @@
-import { styles, cn } from '../common/styles'
+import { styles, cn } from '.'
 
 interface BrandingSectionProps {
   isMobile?: boolean
