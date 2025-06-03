@@ -5,6 +5,7 @@ import {
   Header,
   LoginForm,
 } from '../components/loginPage'
+import useDocumentTitle from '../hooks/useDocumentTitle'
 
 interface LoginFormData {
   employeeId: string
@@ -12,6 +13,8 @@ interface LoginFormData {
 }
 
 const LoginPage: React.FC = () => {
+  useDocumentTitle('로그인 - SKoro')
+
   const [formData, setFormData] = useState<LoginFormData>({
     employeeId: '',
     password: '',
