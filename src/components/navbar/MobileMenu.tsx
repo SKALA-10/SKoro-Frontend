@@ -1,5 +1,5 @@
 import { LogOut } from 'lucide-react'
-import type { MobileMenuProps } from '../../types/navigation'
+import type { MobileMenuProps } from '../../types/Navbar.types'
 import { navItems } from '../../constants/navigation'
 import { styles, conditionalStyles, cn } from '../navbar'
 
