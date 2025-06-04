@@ -68,13 +68,13 @@ const styles = {
 
   // 텍스트 애니메이션 (접기/펼치기)
   textCollapsed: 'opacity-0 w-0 overflow-hidden pl-0',
-  textExpanded: 'opacity-100',
+  textExpanded: 'opacity-100 pl-2',
   textTransition: 'font-medium transition-all duration-300 whitespace-nowrap',
 
   // 브랜딩
   brandingTitle: 'text-white text-3xl font-bold font-agbalumo cursor-default',
   brandingTitleCollapsed:
-    'text-white text-3xl font-bold tracking-wide transition-all duration-300 font-agbalumo pl-2 cursor-default',
+    'text-white text-3xl font-bold tracking-wide transition-all duration-300 font-agbalumo cursor-default',
 
   // 활성 표시기
   activeIndicator:
