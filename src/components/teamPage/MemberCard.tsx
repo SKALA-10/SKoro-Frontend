@@ -1,6 +1,7 @@
 import { FolderOpen } from 'lucide-react'
 import type { TeamMember, MemberCardProps } from '../../types/TeamPage.types'
-import { styles, Button, Avatar } from '.'
+import { styles, Button } from '.'
+import { Avatar } from '../common'
 
 const MemberCard: React.FC<MemberCardProps> = ({ member }) => (
   <article

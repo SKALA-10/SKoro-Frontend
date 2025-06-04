@@ -1,5 +1,5 @@
 import type { HeaderProps } from '../../types/TeamPage.types'
-import { styles, Avatar } from '../../components/teamPage'
+import { styles, Avatar } from '.'
 
 const Header: React.FC<HeaderProps> = ({ title, user }) => (
   <header className={`${styles.flexBetween} py-6 px-10 pt-8`}>

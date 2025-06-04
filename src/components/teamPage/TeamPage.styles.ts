@@ -18,7 +18,4 @@ export const styles = {
   // Text styles
   textSemibold: 'font-semibold',
   textSmall: 'text-sm',
-
-  // Avatar styles
-  avatar: 'rounded-full flex items-center justify-center',
 }
