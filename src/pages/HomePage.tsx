@@ -22,15 +22,10 @@ const HomePage: React.FC = () => {
   }, [location])
 
   return (
-    <div className={`flex h-screen ${styles.grayBg}`}>
-      <Navbar />
-
-      {/* Main Application */}
-      <main className="flex-1 flex flex-col md:ml-0 mt-16 md:mt-0">
-        <PageHeader activeItem={activeItem} currentPath={location} />
-        <MainContent activeItem={activeItem} currentPath={location} />
-      </main>
-    </div>
+    <>
+      <PageHeader activeItem={activeItem} currentPath={location} />
+      <MainContent activeItem={activeItem} currentPath={location} />
+    </>
   )
 }
 
