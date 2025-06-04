@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import type { NavItem } from '../../types/navigation'
+import type { NavItem } from '../../types/Navbar.types'
 import { navItems } from '../../constants/navigation'
 import { MobileHeader, MobileMenu, DesktopSidebar } from '.'
 

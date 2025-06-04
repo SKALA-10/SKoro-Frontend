@@ -1,5 +1,5 @@
 import { Menu, X } from 'lucide-react'
-import type { MobileHeaderProps } from '../../types/navigation'
+import type { MobileHeaderProps } from '../../types/Navbar.types'
 import { styles, cn } from '../navbar'
 
 const MobileHeader: React.FC<MobileHeaderProps> = ({

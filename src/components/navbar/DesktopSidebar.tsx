@@ -1,4 +1,4 @@
-import type { DesktopSidebarProps } from '../../types/navigation'
+import type { DesktopSidebarProps } from '../../types/Navbar.types'
 import { navItems } from '../../constants/navigation'
 import { styles, conditionalStyles, cn } from '../navbar'
 import { ButterflyImg } from '../../assets/common'
