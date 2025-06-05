@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FilterSection, Report } from '../common'
 
-const FeedbackContent: React.FC = () => {
+const FinalContent: React.FC = () => {
   const [selectedYear, setSelectedYear] = useState('2025년도')
   const [selectedRating, setSelectedRating] = useState('최종 평가')
   const [searchQuery, setSearchQuery] = useState('')
@@ -15,15 +15,15 @@ const FeedbackContent: React.FC = () => {
         setSelectedRating={setSelectedRating}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        filterType="feedback"
+        filterType="final"
       />
       <Report
         selectedYear={selectedYear}
         selectedRating={selectedRating}
-        type="feedback"
+        type="final"
       />
     </main>
   )
 }
 
-export default FeedbackContent
+export default FinalContent

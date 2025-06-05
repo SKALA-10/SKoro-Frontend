@@ -18,4 +18,10 @@ export const styles = {
   // Input styles
   input:
     'px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+
+  // Report styles
+  reportSection: 'flex-1 flex flex-col items-start',
+  reportContentArea: 'flex-1 w-full bg-white rounded-b-xl shadow-md',
+  reportButton:
+    'px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 active:bg-blue-800 transition-colors flex items-center',
 }
