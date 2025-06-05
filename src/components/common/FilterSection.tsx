@@ -10,7 +10,7 @@ const FilterSection: React.FC<{
   setSelectedRating: (rating: string) => void
   searchQuery: string
   setSearchQuery: (query: string) => void
-  filterType: 'team' | 'feedback'
+  filterType: 'team' | 'feedback' | 'final'
 }> = ({
   selectedYear,
   setSelectedYear,
@@ -32,12 +32,15 @@ const FilterSection: React.FC<{
         options={['2025년도', '2024년도', '2023년도', '2022년도', '2021년도']}
         onChange={setSelectedYear}
       />
-      <Dropdown
-        label="평가"
-        value={selectedRating}
-        options={['최종 평가', '중간 평가', '초기 평가']}
-        onChange={setSelectedRating}
-      />
+
+      {filterType !== 'final' && (
+        <Dropdown
+          label="평가"
+          value={selectedRating}
+          options={['최종 평가', '중간 평가', '초기 평가']}
+          onChange={setSelectedRating}
+        />
+      )}
       {filterType === 'team' && (
         <SearchBox
           placeholder="이름을 입력하세요"
