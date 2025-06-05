@@ -47,7 +47,7 @@ const Badge: React.FC<{ rank: number; className?: string }> = ({
   className = '',
 }) => (
   <div
-    className={`px-3 h-7 rounded-full bg-[#FFEAB1] ${styles.flexCenter} ${styles.textSmall} ${styles.textSemibold} text-[#F0B100] ${className}`}
+    className={`px-3 h-7 rounded-full bg-[#FFF6DD] ${styles.flexCenter} ${styles.textSmall} ${styles.textSemibold} text-[#F0B100] ${className}`}
   >
     {rank}등
   </div>
