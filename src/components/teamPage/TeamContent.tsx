@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { teamMembers } from '../../dummy/teamMembers'
-import { FilterSection, MemberList } from '.'
+import { FilterSection } from '../common'
+import { MemberList } from '.'
 
 const TeamContent: React.FC = () => {
   const [selectedYear, setSelectedYear] = useState('2025년도')

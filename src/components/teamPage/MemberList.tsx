@@ -1,6 +1,5 @@
 import type { TeamMember } from '../../types/TeamPage.types'
-import { styles } from '../../components/teamPage/TeamPage.styles'
-import MemberCard from './MemberCard'
+import { styles, MemberCard } from '.'
 
 const MemberList: React.FC<{ members: TeamMember[] }> = ({ members }) => (
   <section className="flex-1 flex flex-col overflow-hidden">
