@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { navItems } from '../constants/navigation'
-import { Navbar } from '../components/navbar'
 import { MainContent, PageHeader } from '../components/layout'
-import { styles } from '../components/navbar'
 import useDocumentTitle from '../hooks/useDocumentTitle'
 
 const HomePage: React.FC = () => {

@@ -18,7 +18,6 @@ export interface User {
 
 export interface HeaderProps {
   title: string
-  user: User
 }
 
 export interface DropdownProps {
