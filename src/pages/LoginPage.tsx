@@ -7,6 +7,7 @@ import {
   LoginForm,
 } from '../components/loginPage'
 import useDocumentTitle from '../hooks/useDocumentTitle'
+import UserService from '../services/UserService'
 
 interface LoginFormData {
   employeeId: string
@@ -31,12 +32,15 @@ const LoginPage: React.FC = () => {
   }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('로그인 시도:', formData)
-    alert(
-      `🔐 로그인 정보\n사원 번호: ${formData.employeeId}\n비밀번호: ${formData.password}`
-    )
-    navigate('/home')
+    UserService.login(formData.employeeId, formData.password)
+      .then((response) => {
+        console.log('로그인 성공:', response)
+        navigate('/home')
+      })
+      .catch((error) => {
+        console.error('로그인 실패:', error)
+        alert('로그인에 실패했습니다. 사원 번호와 비밀번호를 확인해주세요.')
+      })
   }
 
   return (
