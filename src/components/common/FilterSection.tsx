@@ -10,6 +10,7 @@ const FilterSection: React.FC<{
   setSelectedRating: (rating: string) => void
   searchQuery: string
   setSearchQuery: (query: string) => void
+  filterType: 'team' | 'feedback'
 }> = ({
   selectedYear,
   setSelectedYear,
@@ -17,6 +18,7 @@ const FilterSection: React.FC<{
   setSelectedRating,
   searchQuery,
   setSearchQuery,
+  filterType,
 }) => (
   <section className="mb-5 flex-shrink-0">
     <nav
@@ -36,11 +38,13 @@ const FilterSection: React.FC<{
         options={['최종 평가', '중간 평가', '초기 평가']}
         onChange={setSelectedRating}
       />
-      <SearchBox
-        placeholder="이름을 입력하세요"
-        value={searchQuery}
-        onChange={setSearchQuery}
-      />
+      {filterType === 'team' && (
+        <SearchBox
+          placeholder="이름을 입력하세요"
+          value={searchQuery}
+          onChange={setSearchQuery}
+        />
+      )}
     </nav>
     <hr className="border-gray-200" />
   </section>

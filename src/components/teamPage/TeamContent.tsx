@@ -23,6 +23,7 @@ const TeamContent: React.FC = () => {
         setSelectedRating={setSelectedRating}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+        filterType="team"
       />
 
       <MemberList members={filteredMembers} />
