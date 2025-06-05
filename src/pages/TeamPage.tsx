@@ -1,13 +1,7 @@
-import type { User } from '../types/TeamPage.types'
 import { TeamContent } from '../components/teamPage'
 import { Header } from '../components/common'
 import useDocumentTitle from '../hooks/useDocumentTitle'
-
-const currentUser: User = {
-  name: '손지영',
-  company: 'SKoro 팀장',
-  avatar: '👨‍💼',
-}
+import { currentUser } from '../dummy/currentUser'
 
 const TeamPage: React.FC = () => {
   useDocumentTitle('팀 관리 - SKoro')
