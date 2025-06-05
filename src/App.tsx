@@ -4,7 +4,7 @@ import {
   Routes,
   Outlet,
 } from 'react-router-dom'
-import { FeedbackPage, HomePage, LoginPage, TeamPage } from './pages'
+import { FeedbackPage, FinalPage, HomePage, LoginPage, TeamPage } from './pages'
 import { Navbar } from './components/navbar'
 
 function App() {
@@ -16,6 +16,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/team" element={<TeamPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
+          <Route path="/final" element={<FinalPage />} />
           <Route path="*" element={<HomePage />} />
         </Route>
       </Routes>
