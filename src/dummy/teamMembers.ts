@@ -3,8 +3,8 @@ import type { TeamMember } from '../types/TeamPage.types'
 export const teamMembers: TeamMember[] = [
   {
     id: 1,
-    name: '손지영',
-    role: 'Project manager',
+    name: '이혜수',
+    role: 'AI Engineer',
     avatar: '👨‍💼',
     rank: 1,
     contributionRate: 95,
@@ -47,8 +47,8 @@ export const teamMembers: TeamMember[] = [
   },
   {
     id: 5,
-    name: '이혜수',
-    role: 'AI Engineer',
+    name: '손지영',
+    role: 'PM Manager',
     avatar: '👩‍💼',
     rank: 5,
     contributionRate: 82,
