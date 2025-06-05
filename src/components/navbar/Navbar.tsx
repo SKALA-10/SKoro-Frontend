@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import type { NavItem } from '../../types/Navbar.types'
 import { navItems } from '../../constants/navigation'
 import { MobileHeader, MobileMenu, DesktopSidebar } from '.'
+import UserService from '../../services/UserService'
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate()
@@ -30,7 +31,17 @@ const Navbar: React.FC = () => {
   }
 
   const handleLogout = () => {
-    navigate('/login', { replace: true })
+    UserService.logout()
+      .then(() => {
+        console.log('로그아웃 성공')
+        localStorage.removeItem('SKoroAccessToken')
+        localStorage.removeItem('SKoroRefreshToken')
+        navigate('/login', { replace: true })
+      })
+      .catch((error) => {
+        console.error('로그아웃 실패:', error)
+        alert('로그아웃에 실패했습니다. 다시 시도해주세요.')
+      })
   }
 
   const toggleMobileMenu = () => {

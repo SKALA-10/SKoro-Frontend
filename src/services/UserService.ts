@@ -21,6 +21,20 @@ class UserService {
     console.log('UserService.signIn response:', response.data)
     return response.data
   }
+
+  // 유저 로그아웃
+  public static async logout(): Promise<void> {
+    const response = await axiosInstance.post(
+      '/api/auth/logout',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('SKoroAccessToken')}`,
+        },
+      }
+    )
+    console.log('UserService.logout response:', response.data)
+  }
 }
 
 export default UserService
