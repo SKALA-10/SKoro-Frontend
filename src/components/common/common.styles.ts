@@ -9,4 +9,13 @@ export const styles = {
   // Text styles
   textSemibold: 'font-semibold',
   textSmall: 'text-sm',
+
+  // Button styles
+  button: 'focus:outline-none transition-colors',
+  buttonPrimary: 'bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700',
+  buttonSecondary: 'bg-white border border-gray-300 hover:border-gray-400',
+
+  // Input styles
+  input:
+    'px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
 }
