@@ -151,8 +151,13 @@ const Report: React.FC<FeedbackReportProps> = ({
           </div>
 
           <article
-            className={`mt-2 rounded-xl ${styles.reportContentArea} p-5`}
-          ></article>
+            className={`mt-2 rounded-xl ${styles.reportContentArea} p-5 min-h-0 overflow-auto`}
+          >
+            <p className="text-gray-500">
+              {selectedYear}년 {selectedRating} 레포트 내용이 여기에 표시됩니다.
+              이 레포트는 팀원들의 피드백과 평가를 기반으로 작성되었습니다.
+            </p>
+          </article>
         </>
       )}
     </section>

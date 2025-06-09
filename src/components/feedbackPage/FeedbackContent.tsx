@@ -7,7 +7,7 @@ const FeedbackContent: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
 
   return (
-    <main className="flex-1 flex flex-col pb-5 px-10 overflow-hidden">
+    <main className="flex-1 flex flex-col pb-5 px-10 min-h-0 min-h-[fit-content] lg:min-h-[auto]">
       <FilterSection
         selectedYear={selectedYear}
         setSelectedYear={setSelectedYear}

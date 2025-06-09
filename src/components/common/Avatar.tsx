@@ -1,7 +1,7 @@
 import { styles } from '.'
 
 const Avatar: React.FC<{
-  size: 'sm' | 'md' | 'lg'
+  size: 'sm' | 'md' | 'lg' | 'xl'
   avatar: string
   className?: string
 }> = ({ size, avatar, className = '' }) => {
@@ -9,6 +9,7 @@ const Avatar: React.FC<{
     sm: 'w-11 h-11 text-lg',
     md: 'w-16 h-16 text-2xl',
     lg: 'w-20 h-20 text-3xl',
+    xl: 'w-24 h-24 text-4xl',
   }
 
   return (

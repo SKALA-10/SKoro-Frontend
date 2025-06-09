@@ -1,44 +1,56 @@
+import { useNavigate } from 'react-router-dom'
 import { FolderOpen } from 'lucide-react'
 import type { TeamMember, MemberCardProps } from '../../types/TeamPage.types'
 import { styles } from '.'
 import { Avatar, Button } from '../common'
 
-const MemberCard: React.FC<MemberCardProps> = ({ member }) => (
-  <article
-    className={`${styles.card} p-6 shadow-md relative w-full min-w-0 whitespace-nowrap`}
-  >
-    <Badge rank={member.rank} className="absolute top-4 right-4" />
+const MemberCard: React.FC<MemberCardProps> = ({ member }) => {
+  const navigate = useNavigate()
 
-    <div className="flex items-end gap-4 mb-4">
-      <Avatar size="md" avatar={member.avatar} />
-      <div>
-        <h3 className={`text-xl ${styles.textSemibold}`}>{member.name}</h3>
-        <p className={`${styles.textSmall} mt-1`}>{member.role}</p>
+  const handleViewReport = () => {
+    navigate(`/team/${member.id}`, {
+      state: { member },
+    })
+  }
+
+  return (
+    <article
+      className={`${styles.card} p-6 shadow-md relative w-full min-w-0 whitespace-nowrap`}
+    >
+      <Badge rank={member.rank} className="absolute top-4 right-4" />
+
+      <div className="flex items-end gap-4 mb-4">
+        <Avatar size="md" avatar={member.avatar} />
+        <div>
+          <h3 className={`text-xl ${styles.textSemibold}`}>{member.name}</h3>
+          <p className={`${styles.textSmall} mt-1`}>{member.role}</p>
+        </div>
       </div>
-    </div>
 
-    <div className="mb-4">
-      <div className={`${styles.flexBetween} mb-2`}>
-        <span className={`${styles.textSmall} font-bold`}>최종 기여도</span>
-        <span className={`${styles.textSmall} font-bold`}>
-          {member.contributionRate}%
-        </span>
+      <div className="mb-4">
+        <div className={`${styles.flexBetween} mb-2`}>
+          <span className={`${styles.textSmall} font-bold`}>최종 기여도</span>
+          <span className={`${styles.textSmall} font-bold`}>
+            {member.contributionRate}%
+          </span>
+        </div>
+        <ProgressBar percentage={member.contributionRate} />
       </div>
-      <ProgressBar percentage={member.contributionRate} />
-    </div>
 
-    <div className="flex items-stretch justify-between">
-      <StatusInfo member={member} />
-      <Button
-        variant="primary"
-        className="flex flex-col items-center gap-1 justify-center px-4 py-2"
-      >
-        <FolderOpen className="w-5 h-5" />
-        <span className={`${styles.textSmall} mt-0.5`}>레포트 보기</span>
-      </Button>
-    </div>
-  </article>
-)
+      <div className="flex items-stretch justify-between">
+        <StatusInfo member={member} />
+        <Button
+          variant="primary"
+          className="flex flex-col items-center gap-1 justify-center px-4 py-2"
+          onClick={handleViewReport}
+        >
+          <FolderOpen className="w-5 h-5" />
+          <span className={`${styles.textSmall} mt-0.5`}>레포트 보기</span>
+        </Button>
+      </div>
+    </article>
+  )
+}
 
 export default MemberCard
 
