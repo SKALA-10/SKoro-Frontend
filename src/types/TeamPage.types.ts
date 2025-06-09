@@ -18,6 +18,7 @@ export interface User {
 
 export interface HeaderProps {
   title: string
+  canGoBack?: boolean
 }
 
 export interface DropdownProps {
