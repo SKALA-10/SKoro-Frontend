@@ -5,7 +5,7 @@ export interface Tab {
 }
 
 export interface FeedbackReportProps {
-  selectedYear: string
-  selectedRating: string
+  selectedYear?: string
+  selectedRating?: string
   type: 'feedback' | 'final'
 }
