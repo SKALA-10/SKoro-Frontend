@@ -4,7 +4,14 @@ import {
   Routes,
   Outlet,
 } from 'react-router-dom'
-import { FeedbackPage, FinalPage, HomePage, LoginPage, TeamPage } from './pages'
+import {
+  FeedbackPage,
+  FinalPage,
+  HomePage,
+  LoginPage,
+  TeamPage,
+  MemberReportPage,
+} from './pages'
 import { Navbar } from './components/navbar'
 
 function App() {
@@ -15,6 +22,7 @@ function App() {
         <Route element={<AppLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/team" element={<TeamPage />} />
+          <Route path="/team/:id" element={<MemberReportPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/final" element={<FinalPage />} />
           <Route path="*" element={<HomePage />} />
