@@ -11,6 +11,8 @@ import {
   LoginPage,
   TeamPage,
   MemberReportPage,
+  FinalEvaluationPage,
+  MemberEvaluationPage,
 } from './pages'
 import { Navbar } from './components/navbar'
 
@@ -25,6 +27,8 @@ function App() {
           <Route path="/team/:id" element={<MemberReportPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/final" element={<FinalPage />} />
+          <Route path="/evaluation" element={<FinalEvaluationPage />} />
+          <Route path="/evaluation/:id" element={<MemberEvaluationPage />} />
           <Route path="*" element={<HomePage />} />
         </Route>
       </Routes>
@@ -38,7 +42,7 @@ const AppLayout = () => {
   return (
     <div className="flex h-screen ">
       <Navbar />
-      <div className="flex-1 flex flex-col md:ml-0 mt-16 md:mt-0 ">
+      <div className="flex-1 flex flex-col md:ml-0 mt-16 md:mt-0 min-w-0 ">
         <Outlet />
       </div>
     </div>
