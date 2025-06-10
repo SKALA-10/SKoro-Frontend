@@ -1,12 +1,14 @@
 import { useState, useRef, useEffect } from 'react'
-import { Download } from 'lucide-react'
+import { Download, ChevronLeft } from 'lucide-react'
 import type { FeedbackReportProps, Tab } from '../../types/Report.types'
 import { styles } from '.'
+import { useNavigate } from 'react-router-dom'
 
 const Report: React.FC<FeedbackReportProps> = ({
   selectedYear,
   selectedRating,
   type,
+  memberName,
 }) => {
   const [activeTab, setActiveTab] = useState<string>('report')
   const [indicatorStyle, setIndicatorStyle] = useState<{
@@ -141,13 +143,23 @@ const Report: React.FC<FeedbackReportProps> = ({
         // 피드백 레포트
         <>
           <div className="mt-[-8px] flex w-full justify-between items-center">
-            <h2 className="font-semibold">
-              {selectedYear} {selectedRating} 레포트
-            </h2>
+            <div className="flex items-center space-x-3">
+              {type === 'memberEvaluation' && <BackButton />}
 
-            <button className={styles.reportButton}>
-              <Download className="inline-block w-5" />
-            </button>
+              <h2 className="font-semibold">
+                {type === 'evaluation'
+                  ? '팀 통합 평가'
+                  : type === 'memberEvaluation'
+                  ? `${memberName} 님 평가 근거`
+                  : `${selectedYear} ${selectedRating} 레포트`}
+              </h2>
+            </div>
+
+            {type !== 'memberEvaluation' && (
+              <button className={styles.reportButton}>
+                <Download className="inline-block w-5" />
+              </button>
+            )}
           </div>
 
           <article
@@ -165,3 +177,33 @@ const Report: React.FC<FeedbackReportProps> = ({
 }
 
 export default Report
+
+const BackButton: React.FC = () => {
+  const navigate = useNavigate()
+  const handleGoBack = () => {
+    navigate('/evaluation')
+  }
+
+  return (
+    <button
+      onClick={handleGoBack}
+      className="
+        w-10 h-10 
+        bg-white 
+        rounded-full 
+        shadow-md 
+        flex items-center justify-center
+        transition-all duration-200 ease-in-out
+        hover:shadow-lg hover:scale-105 hover:bg-gray-50
+        active:scale-95 active:shadow-sm
+        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50
+      "
+      aria-label="이전 페이지로 이동"
+    >
+      <ChevronLeft
+        size={24}
+        className="text-gray-700 transition-colors duration-200 hover:text-gray-900"
+      />
+    </button>
+  )
+}
