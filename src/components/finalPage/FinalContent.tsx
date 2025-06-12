@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FilterSection, Report } from '../common'
+import { QnAChat } from '../qnaChat'
 
 const FinalContent: React.FC = () => {
   const [selectedYear, setSelectedYear] = useState('2025년도')
@@ -22,6 +23,8 @@ const FinalContent: React.FC = () => {
         selectedRating={selectedRating}
         type="final"
       />
+
+      <QnAChat />
     </main>
   )
 }
