@@ -1,5 +1,5 @@
 import { Home, Target, Dumbbell, FileText, PenTool } from 'lucide-react'
-import type { NavItem } from '../types/navigation'
+import type { NavItem } from '../types/Navbar.types'
 
 export const navItems: NavItem[] = [
   { id: 'home', icon: Home, label: '홈', path: '/' },
