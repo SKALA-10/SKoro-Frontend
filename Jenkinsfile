@@ -19,10 +19,14 @@ pipeline {
                     echo "📦 Final Image Tag: ${FINAL_IMAGE_TAG}"
 
                     withCredentials([
-                        string(credentialsId: 'image-registry', variable: 'REGISTRY_URL')
+                        string(credentialsId: 'image-registry', variable: 'REGISTRY_URL'),
+                        file(credentialsId: 'front-env', variable: 'VITE_ENV_FILE')
                     ]) {
                         docker.withRegistry("https://amdp-registry.skala-ai.com", "${HARBOR_CREDENTIAL_ID}") {
-                            def image = docker.build("${REGISTRY_URL}/${IMAGE_NAME}:${FINAL_IMAGE_TAG}", "--platform linux/amd64 .")
+                            def image = docker.build(
+                                "${REGISTRY_URL}/${IMAGE_NAME}:${FINAL_IMAGE_TAG}",
+                                "--platform linux/amd64 --build-arg VITE_ENV_FILE=\"$(cat ${VITE_ENV_FILE})\" ."
+                            )
                             image.push()
                         }
                     }
