@@ -14,3 +14,18 @@ body {
   background-color: #f8f8f8;
   color: #606060;
 }
+
+@keyframes bigBounce {
+  0%,
+  70%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-6px);
+  }
+}
+
+.big-bounce {
+  animation: bigBounce 1.2s infinite ease-in-out;
+}
