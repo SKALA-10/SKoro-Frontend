@@ -61,7 +61,7 @@ const PeerKeyword: React.FC<{
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <button
-              className="absolute right-2 top-2 text-gray-400 hover:text-gray-600"
+              className="absolute right-2 top-1.5 text-gray-400 hover:text-gray-600"
               type="submit"
             >
               <span className="text-xl">+</span>
