@@ -1,29 +1,19 @@
-import { useState, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
-import { navItems } from '../constants/navigation'
-import { MainContent, PageHeader } from '../components/layout'
+import { Header } from '../components/common'
+import { Dashboard } from '../components/homePage'
+import { MemberInfo } from '../components/memberReportPage'
 import useDocumentTitle from '../hooks/useDocumentTitle'
 
 const HomePage: React.FC = () => {
-  const location = useLocation().pathname
-  const [activeItem, setActiveItem] = useState<string>('home')
-
-  useDocumentTitle(`${activeItem} - SKoro`)
-
-  useEffect(() => {
-    const currentNavItem = navItems.find((item) => item.path === location)
-    if (currentNavItem) {
-      setActiveItem(currentNavItem.id)
-    } else if (location === '/') {
-      setActiveItem('home')
-    }
-  }, [location])
+  useDocumentTitle('홈 화면 - SKoro')
 
   return (
-    <>
-      <PageHeader activeItem={activeItem} currentPath={location} />
-      <MainContent activeItem={activeItem} currentPath={location} />
-    </>
+    <div className="flex flex-1 flex-col min-h-0 min-w-0">
+      <Header title="홈 화면" />
+      <div className="lg:flex-row flex-col flex-1 flex pb-5 px-10 lg:pr-0 min-h-0 mt-[-1rem] gap-5">
+        <Dashboard />
+        <MemberInfo pageType="home" />
+      </div>
+    </div>
   )
 }
 
