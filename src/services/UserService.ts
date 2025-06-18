@@ -1,5 +1,6 @@
 import type { SignInResponse } from '../types/UserService'
 import { axiosInstance } from '../utils/axios'
+import { useUserInfoStore } from '../store/store'
 
 class UserService {
   // 유저 로그인
@@ -7,25 +8,23 @@ class UserService {
     empNo: string,
     password: string
   ): Promise<SignInResponse> {
-    const response = await axiosInstance.post<SignInResponse>(
-      '/api/auth/login',
-      {
-        empNo,
-        password,
-      }
-    )
-
-    localStorage.setItem('SKoroAccessToken', response.data.accessToken)
-    localStorage.setItem('SKoroRefreshToken', response.data.refreshToken)
+    const response = await axiosInstance.post<SignInResponse>('/auth/login', {
+      empNo,
+      password,
+    })
+    sessionStorage.setItem('SKoroAccessToken', response.data.accessToken)
+    sessionStorage.setItem('SKoroRefreshToken', response.data.refreshToken)
+    sessionStorage.setItem('SKoroUserInfo', JSON.stringify(response.data.user))
 
     console.log('UserService.signIn response:', response.data)
+    useUserInfoStore.getState().setUserInfo(response.data.user)
     return response.data
   }
 
   // 유저 로그아웃
   public static async logout(): Promise<void> {
     const response = await axiosInstance.post(
-      '/api/auth/logout',
+      '/auth/logout',
       {},
       {
         headers: {
@@ -33,6 +32,10 @@ class UserService {
         },
       }
     )
+    sessionStorage.removeItem('SKoroAccessToken')
+    sessionStorage.removeItem('SKoroRefreshToken')
+    sessionStorage.removeItem('SKoroUserInfo')
+
     console.log('UserService.logout response:', response.data)
   }
 }

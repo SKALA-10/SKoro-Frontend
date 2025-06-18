@@ -1,6 +1,11 @@
 import { styles, cn } from '../navbar'
 import { Home } from 'lucide-react'
-import { navItems } from '../../constants/navigation'
+import {
+  managerNavItems,
+  memberNavItems,
+  adminNavItems,
+} from '../../constants/navigation'
+import { useUserInfoStore } from '../../store/useUserInfoStore'
 
 interface MainContentProps {
   activeItem: string
@@ -11,7 +16,14 @@ const MainContent: React.FC<MainContentProps> = ({
   activeItem,
   currentPath,
 }) => {
-  const currentPage = navItems.find((item) => item.id === activeItem)
+  const userRole = useUserInfoStore((state) => state.role) || 'MEMBER'
+  const currentPage = (
+    userRole === 'MANAGER'
+      ? managerNavItems
+      : userRole === 'MEMBER'
+      ? memberNavItems
+      : adminNavItems
+  ).find((item) => item.id === activeItem)
   const Icon = currentPage?.icon || Home
 
   return (

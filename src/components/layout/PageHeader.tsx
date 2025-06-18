@@ -1,4 +1,9 @@
-import { navItems } from '../../constants/navigation'
+import {
+  managerNavItems,
+  memberNavItems,
+  adminNavItems,
+} from '../../constants/navigation'
+import { useUserInfoStore } from '../../store/useUserInfoStore'
 import { styles, cn } from '../navbar'
 
 interface PageHeaderProps {
@@ -7,7 +12,14 @@ interface PageHeaderProps {
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({ activeItem, currentPath }) => {
-  const currentPage = navItems.find((item) => item.id === activeItem)
+  const userRole = useUserInfoStore((state) => state.role) || 'MEMBER'
+  const currentPage = (
+    userRole === 'MANAGER'
+      ? managerNavItems
+      : userRole === 'MEMBER'
+      ? memberNavItems
+      : adminNavItems
+  ).find((item) => item.id === activeItem)
 
   return (
     <header className={cn(styles.whiteBg, styles.shadow, 'border-b px-8 py-4')}>

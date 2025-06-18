@@ -1,11 +1,18 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import type { NavItem } from '../../types/Navbar.types'
-import { navItems } from '../../constants/navigation'
+import {
+  managerNavItems,
+  memberNavItems,
+  adminNavItems,
+} from '../../constants/navigation'
 import { MobileHeader, MobileMenu, DesktopSidebar } from '.'
 import UserService from '../../services/UserService'
+import { useUserInfoStore } from '../../store/useUserInfoStore'
+import { clearAuthCache } from '../../store/useAuthStore'
 
 const Navbar: React.FC = () => {
+  const userRole = useUserInfoStore((state) => state.role)
   const navigate = useNavigate()
   const location = useLocation().pathname
 
@@ -16,13 +23,19 @@ const Navbar: React.FC = () => {
 
   // URL 변경 시 activeItem 업데이트
   useEffect(() => {
-    const currentNavItem = navItems.find((item) => item.path === location)
+    const currentNavItem = (
+      userRole === 'MANAGER'
+        ? managerNavItems
+        : userRole === 'MEMBER'
+        ? memberNavItems
+        : adminNavItems
+    ).find((item) => item.path === location)
     if (currentNavItem) {
       setActiveItem(currentNavItem.id)
     } else if (location === '/') {
       setActiveItem('home')
     }
-  }, [location])
+  }, [location, userRole])
 
   const handleNavClick = (item: NavItem) => {
     setActiveItem(item.id)
@@ -34,8 +47,7 @@ const Navbar: React.FC = () => {
     UserService.logout()
       .then(() => {
         console.log('로그아웃 성공')
-        localStorage.removeItem('SKoroAccessToken')
-        localStorage.removeItem('SKoroRefreshToken')
+        clearAuthCache()
         navigate('/login', { replace: true })
       })
       .catch((error) => {
@@ -60,6 +72,7 @@ const Navbar: React.FC = () => {
         onToggleMenu={toggleMobileMenu}
       />
       <MobileMenu
+        userRole={userRole}
         isOpen={isMobileMenuOpen}
         activeItem={activeItem}
         onNavClick={handleNavClick}
@@ -69,6 +82,7 @@ const Navbar: React.FC = () => {
 
       {/* Desktop Navigation */}
       <DesktopSidebar
+        userRole={userRole}
         isCollapsed={isCollapsed}
         activeItem={activeItem}
         hoveredItem={hoveredItem}

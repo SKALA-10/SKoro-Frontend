@@ -1,9 +1,14 @@
 import { LogOut } from 'lucide-react'
 import type { MobileMenuProps } from '../../types/Navbar.types'
-import { navItems } from '../../constants/navigation'
+import {
+  managerNavItems,
+  memberNavItems,
+  adminNavItems,
+} from '../../constants/navigation'
 import { styles, conditionalStyles, cn } from '../navbar'
 
 const MobileMenu: React.FC<MobileMenuProps> = ({
+  userRole,
   isOpen,
   activeItem,
   onNavClick,
@@ -30,7 +35,12 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
       >
         <nav className="py-4 pt-6 px-4 space-y-2" role="navigation">
           <ul className="space-y-2">
-            {navItems.map((item) => {
+            {(userRole === 'MANAGER'
+              ? managerNavItems
+              : userRole === 'MEMBER'
+              ? memberNavItems
+              : adminNavItems
+            ).map((item) => {
               const Icon = item.icon
               const isActive = activeItem === item.id
 
