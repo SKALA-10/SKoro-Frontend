@@ -8,8 +8,8 @@ import {
 } from '../../constants/navigation'
 import { MobileHeader, MobileMenu, DesktopSidebar } from '.'
 import UserService from '../../services/UserService'
-import { useUserInfoStore } from '../../store/store'
-import { clearAuthCache } from '../../App'
+import { useUserInfoStore } from '../../store/useUserInfoStore'
+import { clearAuthCache } from '../../store/useAuthStore'
 
 const Navbar: React.FC = () => {
   const userRole = useUserInfoStore((state) => state.role)
