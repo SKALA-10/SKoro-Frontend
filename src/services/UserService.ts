@@ -1,6 +1,7 @@
 import type { SignInResponse } from '../types/UserService'
 import { axiosInstance } from '../utils/axios'
 
+// User Authentication Service
 class UserService {
   // 유저 로그인
   public static async login(
