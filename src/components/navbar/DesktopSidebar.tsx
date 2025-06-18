@@ -1,10 +1,15 @@
 import type { DesktopSidebarProps } from '../../types/Navbar.types'
-import { navItems } from '../../constants/navigation'
+import {
+  managerNavItems,
+  memberNavItems,
+  adminNavItems,
+} from '../../constants/navigation'
 import { styles, conditionalStyles, cn } from '../navbar'
 import { ButterflyImg } from '../../assets/common'
 import { ChevronLeft, ChevronRight, LogOut } from 'lucide-react'
 
 const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
+  userRole,
   isCollapsed,
   activeItem,
   hoveredItem,
@@ -13,6 +18,13 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
   onToggleCollapse,
   onHoverItem,
 }) => {
+  const navItems =
+    userRole === 'MANAGER'
+      ? managerNavItems
+      : userRole === 'MEMBER'
+      ? memberNavItems
+      : adminNavItems
+
   return (
     <aside
       className={cn(

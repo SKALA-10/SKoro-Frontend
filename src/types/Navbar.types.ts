@@ -17,11 +17,13 @@ export interface MobileHeaderProps {
 }
 
 export interface MobileMenuProps extends NavigationProps {
+  userRole: 'manager' | 'member' | 'admin' | string
   isOpen: boolean
   onClose: () => void
 }
 
 export interface DesktopSidebarProps extends NavigationProps {
+  userRole: 'manager' | 'member' | 'admin' | string
   isCollapsed: boolean
   hoveredItem: string | null
   onToggleCollapse: () => void
