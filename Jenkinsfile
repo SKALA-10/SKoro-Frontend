@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = 'skoro-frontend'
         IMAGE_TAG = '1.0.0'
-        GIT_BRANCH = 'main'
+        GIT_BRANCH = 'develop'
 
         GIT_CREDENTIAL_ID = 'skala-github-id'
         HARBOR_CREDENTIAL_ID = 'skala-image-registry-id'
