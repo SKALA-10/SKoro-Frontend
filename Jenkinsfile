@@ -25,7 +25,7 @@ pipeline {
                         docker.withRegistry("https://amdp-registry.skala-ai.com", "${HARBOR_CREDENTIAL_ID}") {
                             def image = docker.build(
                                 "${REGISTRY_URL}/${IMAGE_NAME}:${FINAL_IMAGE_TAG}",
-                                "--platform linux/amd64 --build-arg VITE_ENV_FILE=\"$(cat ${VITE_ENV_FILE})\" ."
+                                """--platform linux/amd64 --build-arg VITE_ENV_FILE="$(cat ${VITE_ENV_FILE})" ."""
                             )
                             image.push()
                         }
