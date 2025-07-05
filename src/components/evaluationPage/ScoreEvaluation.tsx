@@ -1,15 +1,91 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Edit2, X } from 'lucide-react'
+import EvaluationService from '../../services/EvaluationService'
+import { useLocation } from 'react-router-dom'
 
-const ScoreEvaluation = () => {
+const ScoreEvaluation: React.FC<{
+  memberEmpNo?: string
+  tempEvaluations: any[]
+  setIsSubmitted: (isSubmitted: boolean) => void
+}> = ({ memberEmpNo, tempEvaluations, setIsSubmitted }) => {
+  const location = useLocation()
+  const member = location.state?.member
+
+  const teamEvaluationId = location.state?.teamEvaluationId || null
+  const periodId = location.state?.periodId || 0
+
+  const [recommendEvaluation, setRecommendEvaluation] = useState<any>(null)
+  const getEvaluationReasons = location.state.getEvaluationReasons || {}
+
+  useEffect(() => {
+    setRecommendEvaluation(
+      getEvaluationReasons?.find(
+        (reason: any) => reason.empNo === member.empNo
+      ) || {
+        empNo: member.empNo,
+        score: 0,
+        comment: '',
+        reason: '',
+      }
+    )
+  }, [member, getEvaluationReasons])
+
+  useEffect(() => {
+    setFinalComment(recommendEvaluation?.comment || '')
+    setEditReason('')
+    setFinalScore(recommendEvaluation?.score || 0)
+    setEditScore(recommendEvaluation?.score || 0)
+  }, [recommendEvaluation])
+
   const [isEditing, setIsEditing] = useState(false)
-  const [finalScore, setFinalScore] = useState(3.8)
-  const [editScore, setEditScore] = useState<number | null>(3.8)
+  const [finalScore, setFinalScore] = useState(recommendEvaluation?.score || 0)
+  const [editScore, setEditScore] = useState<number | null>(
+    recommendEvaluation?.score || 0
+  )
   const [editReason, setEditReason] = useState('')
-  const [finalComment, setFinalComment] =
-    useState(`항상 맡은 일을 책임감 있게 수행하며, 팀워크에도 기여도가 높습니다. 주어진 과제 이상으로 고민하고, 더 나은 방향을 제안하는 태도가 인상적입니다.
+  const [finalComment, setFinalComment] = useState(
+    recommendEvaluation?.comment || ''
+  )
 
-아직 경험은 많지 않지만, 빠르게 배우고 적응하는 모습이 인상 깊습니다. 스스로 학습하며 성장하려는 태도가 뛰어나 향후 발전이 더욱 기대됩니다.`)
+  const [originalEvaluation, setOriginalEvaluation] = useState<{
+    score: number
+    comment: string
+    reason: string
+  } | null>(null)
+
+  useEffect(() => {
+    if (member) {
+      const tempEvaluation = tempEvaluations.find(
+        (evaluation) => evaluation.empNo === member.empNo
+      )
+      if (tempEvaluation) {
+        setFinalScore(tempEvaluation.score)
+        setEditScore(tempEvaluation.score)
+        setFinalComment(tempEvaluation.comment || '')
+        setEditReason(tempEvaluation.reason || '')
+        setOriginalEvaluation({
+          score: tempEvaluation.score,
+          comment: tempEvaluation.comment || '',
+          reason: tempEvaluation.reason || '',
+        })
+      }
+    }
+  }, [member, tempEvaluations])
+
+  useEffect(() => {
+    console.log('Selected member:', member)
+    if (member) {
+      const tempEvaluation = tempEvaluations.find(
+        (evaluation) => evaluation.empNo === member.empNo
+      )
+      if (tempEvaluation) {
+        setFinalScore(tempEvaluation.score)
+        setEditScore(tempEvaluation.score)
+        setFinalComment(tempEvaluation.comment || '')
+        setEditReason(tempEvaluation.reason || '')
+      }
+    }
+  }, [member, tempEvaluations])
 
   const handleScoreChange = (value: string) => {
     if (value === '') {
@@ -27,26 +103,60 @@ const ScoreEvaluation = () => {
     }
   }
 
-  const handleSave = () => {
-    if (editScore && finalComment.trim() && editReason.trim()) {
-      setFinalScore(editScore)
-      setIsEditing(false)
-      setEditReason('')
-    }
-  }
-
   const handleCancel = () => {
     setIsEditing(false)
     setEditScore(finalScore)
     setEditReason('')
   }
 
+  const isScoreChanged = editScore !== originalEvaluation?.score
+  const isReasonValid = editReason.trim().length > 0
+  const isCommentChanged =
+    finalComment.trim() !== originalEvaluation?.comment.trim()
+
+  const isValidScoreBlock = !isScoreChanged || (isScoreChanged && isReasonValid)
+
+  const isFormChanged =
+    isScoreChanged ||
+    editReason.trim() !== originalEvaluation?.reason.trim() ||
+    isCommentChanged
+
   const isFormValid =
-    (editScore && finalComment.trim() && editReason.trim()) ||
-    (!isEditing && finalComment.trim())
+    !!editScore &&
+    finalComment.trim().length > 0 &&
+    isValidScoreBlock &&
+    isFormChanged
+
+  const handleSaveEvaluation = () => {
+    if (isFormValid) {
+      EvaluationService.updateTempEvaluation(
+        teamEvaluationId,
+        member.empNo,
+        editScore || 0,
+        finalComment,
+        editReason,
+        periodId
+      )
+        .then(() => {
+          console.log('평가가 성공적으로 저장되었습니다.')
+          setIsEditing(false)
+          setIsSubmitted(true)
+          setOriginalEvaluation({
+            score: editScore || 0,
+            comment: finalComment,
+            reason: editReason,
+          })
+        })
+        .catch((error) => {
+          console.error('평가 저장 중 오류 발생:', error)
+        })
+    } else {
+      console.error('유효하지 않은 폼 데이터입니다.')
+    }
+  }
 
   return (
-    <div className="lg:pl-4 w-fill lg:w-96 flex flex-col">
+    <div className="lg:pl-4 w-fill lg:w-96 flex flex-col min-h-0">
       <div className="mb-4 mt-4 lg:mt-0">
         <h2 className="font-semibold">점수 책정</h2>
       </div>
@@ -128,7 +238,7 @@ const ScoreEvaluation = () => {
       {/* 버튼 */}
       <div className="flex gap-3 mt-auto">
         <button
-          onClick={handleSave}
+          onClick={handleSaveEvaluation}
           disabled={!isFormValid}
           className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all h-12 mt-auto ${
             isFormValid
