@@ -1,13 +1,15 @@
 export interface TeamMember {
-  id: number
-  name: string
-  role: string
-  avatar: string
-  rank: number
+  empNo: string
+  empName: string
+  profileImage: string
+  position: string
   contributionRate: number
-  status: string
-  maxScore: number
-  currentScore: number
+  skill: string
+  attitude?: string
+  score?: number
+  ranking: number
+  aiAnnualAchievementRate?: number
+  aiAchievementRate?: number
 }
 
 export interface User {
@@ -16,9 +18,23 @@ export interface User {
   avatar: string
 }
 
+// period interface
+export interface Period {
+  periodId: number
+  year: number
+  periodName: string
+  unit: string
+  orderInYear: number
+  startDate: string
+  endDate: string
+  final: boolean
+}
+
 export interface HeaderProps {
   title: string
   canGoBack?: boolean
+  selectedPeriod?: Period | null
+  backUrl?: string
 }
 
 export interface DropdownProps {
@@ -36,4 +52,6 @@ export interface SearchBoxProps {
 
 export interface MemberCardProps {
   member: TeamMember
+  isFinal: boolean
+  selectedPeriod: any
 }
