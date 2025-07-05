@@ -1,33 +1,118 @@
 import { Avatar } from '../../components/common'
-import { teamMembers } from '../../dummy/teamMembers'
+// import { feedbackTeamMembers } from '../../dummy/teamMembers'
 import { useNavigate } from 'react-router-dom'
-import { useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { use, useEffect, useRef, useState } from 'react'
+import { useParams, useLocation } from 'react-router-dom'
+import EvaluationService from '../../services/EvaluationService'
+import { useUserInfoStore } from '../../store/useUserInfoStore'
 
 interface TeamMemberWithEvaluation {
-  id: number
-  name: string
-  avatar: string
-  isEvaluated: boolean // 평가 완료 여부
+  peerEvaluationId?: number
+  targetEmpNo?: string
+  targetEmpName?: string
+  targetEmpProfileImage?: string
+  completed?: boolean
+
+  empNo?: string
+  empName?: string
+  profileImage?: string
+  status?: string
 }
 
-const TeamList: React.FC = () => {
+const TeamList: React.FC<{
+  periodId: number
+  isSubmitted?: boolean
+  setIsSubmitted?: (isSubmitted: boolean) => void
+  teamEvaluationId?: number | null
+  evaluationReasons?: any[]
+}> = ({
+  periodId,
+  isSubmitted,
+  setIsSubmitted,
+  teamEvaluationId,
+  evaluationReasons,
+}) => {
   const { id } = useParams<{ id: string }>()
+
+  const location = useLocation()
+  const {
+    teamEvaluationId: curTeamEvaluationId,
+    evaluationReasons: getEvaluationReasonsFromState,
+    getEvaluationReasons,
+  } = location.state || {}
+
   const navigate = useNavigate()
+  const userRole = useUserInfoStore((state) => state.role)
+  const userEmpNo = useUserInfoStore((state) => state.empNo)
+
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const SCROLL_POSITION_KEY = 'teamlist-scroll-position'
+  const [feedbackTeamMembers, setFeedbackTeamMembers] = useState<
+    TeamMemberWithEvaluation[]
+  >([])
 
   // 선택된 멤버 ID 상태
-  const [selectedMemberId, setSelectedMemberId] = useState<number | null>(
-    id ? parseInt(id, 10) : null
+  const [selectedMemberId, setSelectedMemberId] = useState<string | null>(
+    id ? id : null
   )
 
-  const [enhancedTeamMembers] = useState<TeamMemberWithEvaluation[]>(() => {
-    return teamMembers.map((member, index) => ({
-      ...member,
-      isEvaluated: index % 3 === 0, // 3명 중 1명씩 평가 완료로 임시 설정
-    }))
-  })
+  useEffect(() => {
+    console.log('팀원 리스트 조회 시작:', periodId, userRole, userEmpNo)
+    if (userRole === 'MANAGER') {
+      // 팀원 리스트 조회 (이름, 사진, 하향 평가 완료 여부)
+      EvaluationService.getEmployeesStatusList(
+        teamEvaluationId || curTeamEvaluationId
+      )
+        .then((data) => {
+          console.log('팀원 리스트 조회 성공:', data)
+          setFeedbackTeamMembers(data)
+          if (isSubmitted) {
+            const firstIncompleteMember = data.find(
+              (member: any) =>
+                member.status !== 'COMPLETED' && member.empNo !== id
+            )
+            if (firstIncompleteMember) {
+              handleMemberClick(
+                periodId,
+                firstIncompleteMember.empNo,
+                firstIncompleteMember
+              )
+            }
+            if (isSubmitted && setIsSubmitted) {
+              setIsSubmitted(false)
+            }
+          }
+        })
+        .catch((error) => {
+          console.error('팀원 리스트 조회 실패:', error)
+        })
+    } else {
+      // [팀원] 동료 평가 리스트 조회
+      EvaluationService.getPeerEvaluationList(userEmpNo, periodId)
+        .then((data) => {
+          console.log('동료 평가 리스트 조회 성공:', data)
+          setFeedbackTeamMembers(data)
+          if ((userRole === 'MEMBER' && !id) || isSubmitted) {
+            const firstIncompleteMember = data.find(
+              (member: any) => !member.completed
+            )
+            if (firstIncompleteMember) {
+              handleMemberClick(
+                firstIncompleteMember.peerEvaluationId,
+                firstIncompleteMember.targetEmpNo,
+                firstIncompleteMember
+              )
+            }
+            if (isSubmitted && setIsSubmitted) {
+              setIsSubmitted(false)
+            }
+          }
+        })
+        .catch((error) => {
+          console.error('동료 평가 리스트 조회 실패:', error)
+        })
+    }
+  }, [id, isSubmitted, periodId, curTeamEvaluationId])
 
   // 컴포넌트 마운트 시 저장된 스크롤 위치 복원
   useEffect(() => {
@@ -43,16 +128,25 @@ const TeamList: React.FC = () => {
   }, [])
 
   const handleMemberClick = (
-    memberId: number,
+    periodId: number,
+    memberId: string,
     member: TeamMemberWithEvaluation
   ) => {
     // 선택된 멤버가 이미 선택되어 있으면 선택 해제, 아니면 선택
-    if (selectedMemberId === memberId) {
+    if (selectedMemberId === memberId && userRole === 'MANAGER') {
       setSelectedMemberId(null)
       navigate('/evaluation') // 평가 페이지로 이동
     } else {
       setSelectedMemberId(memberId)
-      navigate(`/evaluation/${memberId}`, { state: { member } })
+      navigate(`/evaluation/${teamEvaluationId ? member.empNo : periodId}`, {
+        state: {
+          member,
+          periodId,
+          teamEvaluationId,
+          evaluationReasons,
+          getEvaluationReasons: getEvaluationReasons || evaluationReasons,
+        },
+      })
     }
   }
 
@@ -89,31 +183,46 @@ const TeamList: React.FC = () => {
           onScroll={handleScroll}
           className="flex overflow-x-auto px-5 py-4 space-x-7 scrollbar-hide"
         >
-          {enhancedTeamMembers.map((member) => {
-            const isSelected = selectedMemberId === member.id
+          {feedbackTeamMembers.map((member) => {
+            const isSelected =
+              selectedMemberId === member.targetEmpNo ||
+              selectedMemberId === member.empNo
             const isOtherSelected = selectedMemberId !== null && !isSelected
 
             return (
               <button
-                onClick={() => handleMemberClick(member.id, member)}
-                key={member.id}
+                onClick={() =>
+                  handleMemberClick(
+                    member.peerEvaluationId || periodId,
+                    member.targetEmpNo || member.empNo || '',
+                    member
+                  )
+                }
+                disabled={member.completed}
+                key={member.targetEmpNo || member.empNo}
                 className={`flex flex-col items-center min-w-16 max-w-16 truncate transition-opacity duration-200 ${
                   isOtherSelected ? 'opacity-50' : 'opacity-100'
-                }`}
+                }
+                ${
+                  member.completed
+                    ? 'cursor-not-allowed'
+                    : 'cursor-pointer hover:opacity-90'
+                }
+                `}
               >
                 <span className="text-2xl relative">
-                  {member.isEvaluated ? (
+                  {member.completed || member.status === 'COMPLETED' ? (
                     // 평가 완료된 경우: 초록색 배경의 체크 표시
                     <div className="w-16 h-16 bg-[#02BC7D] rounded-full flex items-center justify-center">
                       <CheckIcon />
                     </div>
                   ) : (
                     // 평가 미완료된 경우: 기존 Avatar
-                    <Avatar avatar={member.avatar} size="md" />
+                    <Avatar avatar={'👤'} size="md" />
                   )}
                 </span>
                 <span className="mt-2 text-sm font-semibold">
-                  {member.name}
+                  {member.targetEmpName || member.empName}
                 </span>
               </button>
             )
