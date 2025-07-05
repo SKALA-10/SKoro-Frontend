@@ -1,5 +1,7 @@
 import { Send } from 'lucide-react'
 import type { Message } from '../../types/Chat.types'
+import ChatService from '../../services/ChatService'
+import { useUserInfoStore } from '../../store/useUserInfoStore'
 
 const ChatInput: React.FC<{
   chatType: 'team' | 'bot' | null
@@ -12,6 +14,7 @@ const ChatInput: React.FC<{
   setInputValue: (value: string) => void
   isLoading: boolean
   setIsLoading: (loading: boolean) => void
+  periods?: any
 }> = ({
   chatType,
   setMessages,
@@ -23,8 +26,13 @@ const ChatInput: React.FC<{
   setInputValue,
   isLoading,
   setIsLoading,
+  periods,
 }) => {
+  const userEmpNo = useUserInfoStore((state) => state.empNo)
+
   const handleSummaryToggle = () => {
+    console.log('periods:', periods)
+
     if (!summaryMode) {
       const userMessage: Message = {
         id: Date.now(),
@@ -37,18 +45,35 @@ const ChatInput: React.FC<{
       // 로딩 상태 시작
       setIsLoading(true)
 
-      setTimeout(() => {
-        const botMessage: Message = {
-          id: Date.now(),
-          text: '다음과 같이 요약했습니다.\n팀장님 존경해요',
-          isBot: true,
-          timestamp: new Date(),
-        }
-        setMessages((prev) => [...prev, botMessage])
-        setSummaryMode(true)
-        setInputValue('팀장님 존경해요')
-        setIsLoading(false)
-      }, 2500)
+      ChatService.chatWithSkoroBot(
+        userEmpNo,
+        'appeal_to_manager',
+        '요약하기',
+        true
+      )
+        .then((response) => {
+          const botMessage: Message = {
+            id: Date.now(),
+            text: response.summary, // API 응답에서 메시지 텍스트 가져오기
+            isBot: true,
+            timestamp: new Date(),
+          }
+          setMessages((prev) => [...prev, botMessage])
+          setSummaryMode(true)
+          setInputValue(response.summary)
+          setIsLoading(false) // 로딩 상태 종료
+        })
+        .catch((error) => {
+          console.error('Error chatting with SKoro bot:', error)
+          setIsLoading(false) // 로딩 상태 종료
+          const errorMessage: Message = {
+            id: Date.now(),
+            text: '오류가 발생했습니다. 다시 시도해주세요.',
+            isBot: true,
+            timestamp: new Date(),
+          }
+          setMessages((prev) => [...prev, errorMessage])
+        })
     } else {
       // 보내기 버튼 클릭 시
       const userMessage: Message = {
@@ -65,7 +90,7 @@ const ChatInput: React.FC<{
       setTimeout(() => {
         const botMessage: Message = {
           id: Date.now(),
-          text: '다음과 같이 요약했습니다.\n\n팀장님 존경해요',
+          text: '팀장님께 이야기를 전달드렸어요.\n오늘 하루도 수고 많으셨어요.',
           isBot: true,
           timestamp: new Date(),
         }
@@ -94,25 +119,77 @@ const ChatInput: React.FC<{
     setMessages((prev) => [...prev, userMessage])
     setInputValue('')
 
+    const content = inputValue
+
     // 로딩 상태 시작
     setIsLoading(true)
 
-    // 봇 응답 시뮬레이션
-    setTimeout(() => {
-      const botResponse: Message = {
-        id: Date.now() + 1,
-        text:
-          chatType === 'team'
-            ? summaryMode
-              ? '팀장님께 이야기를 전달드렸어요.\n오늘 하루도 수고 많으셨어요.'
-              : '그러셨군요. 지영 님의 마음 이해해요.'
-            : '점수가 만족스럽지 않으신가 봐요.\n그래도 평균 이상으로 점수가 나왔으니 충분히 잘하셨어요.',
-        isBot: true,
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, botResponse])
-      setIsLoading(false) // 로딩 상태 종료
-    }, 3000)
+    console.log('ChatInput - handleSendMessage:', {
+      chatType,
+      summaryMode,
+      content,
+      periods,
+    })
+
+    if (chatType === 'team' && summaryMode) {
+      // 해당 기간의 팀장에 대한 피드백 저장
+      console.log('Saving feedback:', content, periods.periodId)
+      ChatService.saveFeedback(content, periods.periodId)
+        .then(() => {
+          console.log('Feedback saved successfully')
+          const botResponse: Message = {
+            id: Date.now() + 1,
+            text:
+              chatType === 'team'
+                ? summaryMode
+                  ? '팀장님께 이야기를 전달드렸어요.\n오늘 하루도 수고 많으셨어요.'
+                  : '그러셨군요. 지영 님의 마음 이해해요.'
+                : '점수가 만족스럽지 않으신가 봐요.\n그래도 평균 이상으로 점수가 나왔으니 충분히 잘하셨어요.',
+            isBot: true,
+            timestamp: new Date(),
+          }
+          setMessages((prev) => [...prev, botResponse])
+          setIsLoading(false) // 로딩 상태 종료
+        })
+        .catch((error) => {
+          console.error('Error saving feedback:', error)
+        })
+    } else {
+      console.log('Sending message to SKoro bot:', {
+        chatType,
+        summaryMode,
+        inputValue,
+      })
+
+      ChatService.chatWithSkoroBot(
+        userEmpNo,
+        chatType === 'team' ? 'appeal_to_manager' : 'default',
+        inputValue,
+        summaryMode
+      )
+        .then((response) => {
+          const botMessage: Message = {
+            id: Date.now() + 1,
+            text: response.response, // API 응답에서 메시지 텍스트 가져오기
+            isBot: true,
+            timestamp: new Date(),
+          }
+          setMessages((prev) => [...prev, botMessage])
+          setIsSending(false)
+          setIsLoading(false) // 로딩 상태 종료
+        })
+        .catch((error) => {
+          console.error('Error chatting with SKoro bot:', error)
+          setIsLoading(false) // 로딩 상태 종료
+          const errorMessage: Message = {
+            id: Date.now() + 1,
+            text: '오류가 발생했습니다. 다시 시도해주세요.',
+            isBot: true,
+            timestamp: new Date(),
+          }
+          setMessages((prev) => [...prev, errorMessage])
+        })
+    }
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

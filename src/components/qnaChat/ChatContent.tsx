@@ -2,6 +2,8 @@ import { useRef, useEffect } from 'react'
 import { ButterflyWhiteImg } from '../../assets/common'
 import type { Message } from '../../types/Chat.types'
 import { ChatLoading } from '.'
+import ChatService from '../../services/ChatService'
+import { useUserInfoStore } from '../../store/useUserInfoStore'
 
 const ChatContent: React.FC<{
   chatType: 'team' | 'bot' | null
@@ -10,6 +12,7 @@ const ChatContent: React.FC<{
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>
   isLoading: boolean
   setIsLoading: (loading: boolean) => void
+  periods?: any
 }> = ({
   chatType,
   setChatType,
@@ -17,8 +20,11 @@ const ChatContent: React.FC<{
   setMessages,
   isLoading,
   setIsLoading,
+  periods,
 }) => {
   const chatContainerRef = useRef<HTMLDivElement | null>(null)
+  if (periods?.periodPhase !== 'EVALUATION_FEEDBACK') setChatType('bot')
+  const userEmpNo = useUserInfoStore((state) => state.empNo)
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -41,16 +47,32 @@ const ChatContent: React.FC<{
       // 로딩 상태 시작
       setIsLoading(true)
 
-      setTimeout(() => {
-        const teamMessage: Message = {
-          id: Date.now(),
-          text: '팀장님께 이야기하고 싶으시군요!\n이야기를 들려주세요',
-          isBot: true,
-          timestamp: new Date(),
-        }
-        setMessages((prev) => [...prev, teamMessage])
-        setIsLoading(false)
-      }, 2000)
+      ChatService.chatWithSkoroBot(
+        userEmpNo,
+        'appeal_to_manager',
+        '팀장님께 이야기'
+      )
+        .then((response) => {
+          const teamMessage: Message = {
+            id: Date.now(),
+            text: response.response, // API 응답에서 메시지 텍스트 가져오기
+            isBot: true,
+            timestamp: new Date(),
+          }
+          setMessages((prev) => [...prev, teamMessage])
+          setIsLoading(false)
+        })
+        .catch((error) => {
+          console.error('Error chatting with SKoro bot:', error)
+          setIsLoading(false)
+          const errorMessage: Message = {
+            id: Date.now(),
+            text: '오류가 발생했습니다. 다시 시도해주세요.',
+            isBot: true,
+            timestamp: new Date(),
+          }
+          setMessages((prev) => [...prev, errorMessage])
+        })
     } else {
       const userMessage: Message = {
         id: Date.now(),
@@ -63,16 +85,28 @@ const ChatContent: React.FC<{
       // 로딩 상태 시작
       setIsLoading(true)
 
-      setTimeout(() => {
-        const botMessage: Message = {
-          id: Date.now(),
-          text: 'SKoro bot과 대화하고 싶으시군요!\n이야기를 들려주세요',
-          isBot: true,
-          timestamp: new Date(),
-        }
-        setMessages((prev) => [...prev, botMessage])
-        setIsLoading(false)
-      }, 2000)
+      ChatService.chatWithSkoroBot(userEmpNo, 'default', 'SKoro bot과 대화')
+        .then((response) => {
+          const botMessage: Message = {
+            id: Date.now(),
+            text: response.response, // API 응답에서 메시지 텍스트 가져오기
+            isBot: true,
+            timestamp: new Date(),
+          }
+          setMessages((prev) => [...prev, botMessage])
+          setIsLoading(false)
+        })
+        .catch((error) => {
+          console.error('Error chatting with SKoro bot:', error)
+          setIsLoading(false)
+          const errorMessage: Message = {
+            id: Date.now(),
+            text: '오류가 발생했습니다. 다시 시도해주세요.',
+            isBot: true,
+            timestamp: new Date(),
+          }
+          setMessages((prev) => [...prev, errorMessage])
+        })
     }
   }
 
@@ -143,18 +177,21 @@ const ChatContent: React.FC<{
       {isLoading && <ChatLoading />}
 
       {/* 챗봇 유형 선택 버튼들 */}
-      {!chatType && messages.length > 0 && !isLoading && (
-        <div className="flex space-x-1 gap-1 pl-10">
-          <ChatTypeSelectBtn
-            type="bot"
-            onClick={() => handleChatTypeSelect('bot')}
-          />
-          <ChatTypeSelectBtn
-            type="team"
-            onClick={() => handleChatTypeSelect('team')}
-          />
-        </div>
-      )}
+      {!chatType &&
+        messages.length > 0 &&
+        !isLoading &&
+        periods?.periodPhase === 'EVALUATION_FEEDBACK' && (
+          <div className="flex space-x-1 gap-1 pl-10">
+            <ChatTypeSelectBtn
+              type="bot"
+              onClick={() => handleChatTypeSelect('bot')}
+            />
+            <ChatTypeSelectBtn
+              type="team"
+              onClick={() => handleChatTypeSelect('team')}
+            />
+          </div>
+        )}
     </div>
   )
 }
