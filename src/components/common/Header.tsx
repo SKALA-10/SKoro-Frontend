@@ -1,33 +1,57 @@
-import type { HeaderProps } from '../../types/TeamPage.types'
+import type { HeaderProps, Period } from '../../types/TeamPage.types'
 import { styles, Avatar } from '.'
-import { currentUser } from '../../dummy/currentUser'
 import { ChevronLeft } from 'lucide-react'
+import { useUserInfoStore } from '../../store/useUserInfoStore'
+import { useNavigate } from 'react-router-dom'
 
-const Header: React.FC<HeaderProps> = ({ title, canGoBack }) => (
-  <header className={`${styles.flexBetween} py-6 px-10 pt-8`}>
-    <div className="flex items-center gap-4">
-      {canGoBack && <BackButton />}
-      <h1 className={`text-2xl ${styles.textSemibold}`}>{title}</h1>
-    </div>
-    <div className="flex items-center gap-3">
-      <Avatar
-        size="sm"
-        avatar={currentUser.avatar}
-        className="bg-[#E3E3E3] text-white"
-      />
-      <div className="text-left">
-        <div className={styles.textSemibold}>{currentUser.name}</div>
-        <div className={styles.textSmall}>{currentUser.company}</div>
+const Header: React.FC<HeaderProps> = ({
+  title,
+  canGoBack,
+  selectedPeriod,
+  backUrl = '/',
+}) => {
+  const currentUser = useUserInfoStore((state) => state)
+
+  return (
+    <header className={`${styles.flexBetween} py-6 px-10 pt-8`}>
+      <div className="flex items-center gap-4">
+        {canGoBack ? (
+          selectedPeriod ? (
+            <BackButton selectedPeriod={selectedPeriod} backUrl={backUrl} />
+          ) : (
+            <BackButton backUrl={backUrl} />
+          )
+        ) : null}
+        <h1 className={`text-2xl ${styles.textSemibold}`}>{title}</h1>
       </div>
-    </div>
-  </header>
-)
+      <div className="flex items-center gap-3">
+        <Avatar size="sm" avatar="👤" className="bg-[#E3E3E3] text-white" />
+        <div className="text-left">
+          <div className={styles.textSemibold}>{currentUser.empName}</div>
+          <div className={styles.textSmall}>
+            {currentUser.headquarterName} {currentUser.position}
+          </div>
+        </div>
+      </div>
+    </header>
+  )
+}
 
 export default Header
 
-const BackButton: React.FC = () => {
+const BackButton: React.FC<{ selectedPeriod?: Period; backUrl?: string }> = ({
+  selectedPeriod,
+  backUrl = '/',
+}) => {
+  const navigate = useNavigate()
   const handleGoBack = () => {
-    window.history.back()
+    if (selectedPeriod) {
+      navigate(backUrl, {
+        state: { selectedPeriod },
+      })
+    } else {
+      navigate(-1)
+    }
   }
 
   return (
