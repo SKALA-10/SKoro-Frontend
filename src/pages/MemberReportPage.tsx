@@ -2,17 +2,30 @@ import { useLocation } from 'react-router-dom'
 import { Header } from '../components/common'
 import useDocumentTitle from '../hooks/useDocumentTitle'
 import { MemberReportContent } from '../components/memberReportPage'
+import { useEffect, useState } from 'react'
+import ReportService from '../services/ReportService'
 
 const MemberReportPage: React.FC = () => {
   useDocumentTitle('분기별 피드백 - SKoro')
 
   const location = useLocation()
   const member = location.state?.member || memberDummy
+  const [selectedPeriod, setSelectedPeriod] = useState(
+    location.state?.selectedPeriod || null
+  )
 
   return (
     <div className="flex flex-1 flex-col min-h-0 ">
-      <Header title={`${member.name} 님 분기별 레포트`} canGoBack={true} />
-      <MemberReportContent />
+      <Header
+        title={`${member.empName} 님 분기별 레포트`}
+        canGoBack={true}
+        selectedPeriod={selectedPeriod}
+        backUrl="/team"
+      />
+      <MemberReportContent
+        selectedPeriod={selectedPeriod}
+        setSelectedPeriod={setSelectedPeriod}
+      />
     </div>
   )
 }
