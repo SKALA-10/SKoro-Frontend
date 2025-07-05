@@ -1,17 +1,30 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { PeerKeyword, PeerNav, PeerType } from '.'
+import PeerEvaluationService from '../../services/PeerEvaluation'
 
-const PeerEvaluation = () => {
+const PeerEvaluation: React.FC<{
+  peerEvaluationId: number
+  isSubmitted: boolean
+  setIsSubmitted: (isSubmitted: boolean) => void
+}> = ({ peerEvaluationId, isSubmitted, setIsSubmitted }) => {
   const [currentStep, setCurrentStep] = useState(1)
-  const [selectedOption, setSelectedOption] = useState<string>('')
-  const [selectedKeywords, setSelectedKeywords] = useState<string[]>([])
+  const [selectedOption, setSelectedOption] = useState<number>(0)
+  const [selectedKeywords, setSelectedKeywords] = useState<number[]>([])
   const [customKeywords, setCustomKeywords] = useState<string[]>([])
 
-  const handleOptionSelect = (optionId: string) => {
+  useEffect(() => {
+    setCurrentStep(1)
+    setSelectedOption(0)
+    setSelectedKeywords([])
+    setCustomKeywords([])
+    setIsSubmitted(false)
+  }, [peerEvaluationId])
+
+  const handleOptionSelect = (optionId: number) => {
     setSelectedOption(optionId)
   }
 
-  const handleKeywordToggle = (keyword: string) => {
+  const handleKeywordToggle = (keyword: number) => {
     setSelectedKeywords((prev) =>
       prev.includes(keyword)
         ? prev.filter((k) => k !== keyword)
@@ -49,18 +62,28 @@ const PeerEvaluation = () => {
   }
 
   const handleSubmit = () => {
-    console.log('평가 제출:', {
+    PeerEvaluationService.submitPeerEvaluation(
+      peerEvaluationId,
       selectedOption,
+      '',
       selectedKeywords,
-      customKeywords,
-    })
+      customKeywords
+    )
+      .then(() => {
+        alert('평가가 성공적으로 제출되었습니다.')
+        setIsSubmitted(true)
+      })
+      .catch((error) => {
+        console.error('평가 제출 실패:', error)
+        alert('평가 제출에 실패했습니다. 다시 시도해주세요.')
+      })
   }
 
   return (
     <div className="rounded-xl flex-1 flex flex-col">
       <h2 className="font-semibold mb-2">동료 평가</h2>
 
-      <section className="relative bg-white rounded-xl shadow-md px-6 py-5 flex-1 flex flex-col">
+      <section className="relative bg-white rounded-xl shadow-md px-6 py-5 flex-1 flex flex-col min-h-0">
         {/* 상단 네비게이션 */}
         <PeerNav currentStep={currentStep} />
 
