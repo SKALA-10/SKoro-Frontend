@@ -4,41 +4,52 @@ import type { TeamMember, MemberCardProps } from '../../types/TeamPage.types'
 import { styles } from '.'
 import { Avatar, Button } from '../common'
 
-const MemberCard: React.FC<MemberCardProps> = ({ member }) => {
+const MemberCard: React.FC<MemberCardProps> = ({
+  member,
+  isFinal,
+  selectedPeriod,
+}) => {
   const navigate = useNavigate()
 
   const handleViewReport = () => {
-    navigate(`/team/${member.id}`, {
-      state: { member },
+    navigate(`/team/${member.empNo}`, {
+      state: { member, selectedPeriod },
     })
   }
+  console.log('member', member)
 
   return (
     <article
       className={`${styles.card} p-6 shadow-md relative w-full min-w-0 whitespace-nowrap`}
     >
-      <Badge rank={member.rank} className="absolute top-4 right-4" />
+      <Badge rank={member.ranking} className="absolute top-4 right-4" />
 
       <div className="flex items-end gap-4 mb-4">
-        <Avatar size="md" avatar={member.avatar} />
+        <Avatar size="md" avatar="👤" />
         <div>
-          <h3 className={`text-xl ${styles.textSemibold}`}>{member.name}</h3>
-          <p className={`${styles.textSmall} mt-1`}>{member.role}</p>
+          <h3 className={`text-xl ${styles.textSemibold}`}>{member.empName}</h3>
+          <p className={`${styles.textSmall} mt-1`}>{member.position}</p>
         </div>
       </div>
 
       <div className="mb-4">
         <div className={`${styles.flexBetween} mb-2`}>
-          <span className={`${styles.textSmall} font-bold`}>최종 기여도</span>
+          <span className={`${styles.textSmall} font-semibold`}>
+            {isFinal ? '최종' : '누적'} 달성률
+          </span>
           <span className={`${styles.textSmall} font-bold`}>
-            {member.contributionRate}%
+            {member.aiAnnualAchievementRate || member.aiAchievementRate}%
           </span>
         </div>
-        <ProgressBar percentage={member.contributionRate} />
+        <ProgressBar
+          percentage={
+            member.aiAnnualAchievementRate || member.aiAchievementRate || 100
+          }
+        />
       </div>
 
       <div className="flex items-stretch justify-between">
-        <StatusInfo member={member} />
+        <StatusInfo member={member} isFinal={isFinal} />
         <Button
           variant="primary"
           className="flex flex-col items-center gap-1 justify-center px-4 py-2"
@@ -77,33 +88,37 @@ const ProgressBar: React.FC<{ percentage: number; className?: string }> = ({
   </div>
 )
 
-const StatusInfo: React.FC<{ member: TeamMember }> = ({ member }) => {
-  const getStatusColor = (status: string) => {
-    const colors = {
-      우수: 'text-blue-600',
-      보통: 'text-green-600',
-      미흡: 'text-orange-600',
-    }
-    return colors[status as keyof typeof colors] || 'text-gray-600'
+const StatusInfo: React.FC<{ member: TeamMember; isFinal: boolean }> = ({
+  member,
+  isFinal,
+}) => {
+  const getStatusColor = (status: number) => {
+    if (status >= 67) return 'text-blue-600'
+    if (status >= 34) return 'text-green-600'
+    if (status >= 0) return 'text-orange-600'
+    return 'text-red-600'
   }
 
   return (
     <div className="bg-gray-100 rounded-lg py-3 px-4 flex-1 mr-3 flex items-center">
       <div className="space-y-2 w-full">
         <div className={styles.flexBetween}>
-          <span className={`${styles.textSmall} mr-2`}>역량</span>
+          <span className={`${styles.textSmall} mr-2`}>기여도</span>
           <span
             className={`${styles.textSemibold} ${
               styles.textSmall
-            } ${getStatusColor(member.status)}`}
+            } ${getStatusColor(member.contributionRate)}`}
           >
-            {member.status}
+            {member.contributionRate}
           </span>
         </div>
         <div className={styles.flexBetween}>
-          <span className={`${styles.textSmall} mr-2`}>최종 점수</span>
+          <span className={`${styles.textSmall} mr-2`}>
+            {isFinal ? '최종 점수' : '태도'}
+          </span>
           <span className={`${styles.textSmall} ${styles.textSemibold}`}>
-            {member.currentScore}점
+            {isFinal ? member.score : member.attitude}
+            {isFinal ? '점' : ''}
           </span>
         </div>
       </div>

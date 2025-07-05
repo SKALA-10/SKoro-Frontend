@@ -10,7 +10,7 @@ const ProtectedRoute = memo(() => {
   }
 
   const userRole = useUserInfoStore((state) => state.role || 'MEMBER')
-  if (userRole === 'ADMIN') {
+  if (userRole === 'ADMIN' && window.location.pathname === '/admin') {
     return <Navigate to="/" replace />
   }
 

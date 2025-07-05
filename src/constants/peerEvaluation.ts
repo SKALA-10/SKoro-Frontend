@@ -1,23 +1,23 @@
 interface CollaborationOption {
-  id: string
+  id: number
   text: string
 }
 
 export const collaborationOptions: CollaborationOption[] = [
   {
-    id: 'option1',
+    id: 4,
     text: '해당 동료의 업무를 잘 알고 있으며, 실제 협업 Task를 함께 수행했습니다.',
   },
   {
-    id: 'option2',
+    id: 3,
     text: '동일한 과제를 수행했지만, 업무 내용은 완전히 분리되어 있었습니다.',
   },
   {
-    id: 'option3',
+    id: 2,
     text: '직접적인 협업은 없지만, 간접적으로 그 업무를 파악할 수 있었습니다.',
   },
   {
-    id: 'option4',
+    id: 1,
     text: '동료의 업무나 역할을 잘 알지 못합니다.',
   },
 ]

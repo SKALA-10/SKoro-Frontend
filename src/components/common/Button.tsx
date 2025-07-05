@@ -6,6 +6,7 @@ const Button: React.FC<{
   children: React.ReactNode
   onClick?: () => void
   className?: string
+  disabled?: boolean
 }> = ({ variant, size = 'md', children, onClick, className = '' }) => {
   const baseStyles = styles.button
   const variantStyles =

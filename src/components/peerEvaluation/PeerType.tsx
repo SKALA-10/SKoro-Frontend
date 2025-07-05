@@ -2,8 +2,8 @@ import { collaborationOptions } from '../../constants/peerEvaluation'
 
 const PeerType: React.FC<{
   onNext: () => void
-  onOptionSelect: (optionId: string) => void
-  selectedOption: string
+  onOptionSelect: (optionId: number) => void
+  selectedOption: number
 }> = ({ onNext, onOptionSelect, selectedOption }) => {
   return (
     <>

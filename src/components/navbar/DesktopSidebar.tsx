@@ -17,6 +17,7 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
   onLogout,
   onToggleCollapse,
   onHoverItem,
+  evaluationStatus,
 }) => {
   const navItems =
     userRole === 'MANAGER'
@@ -89,30 +90,42 @@ const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
             const isActive = activeItem === item.id
             const isHovered = hoveredItem === item.id
 
-            return (
-              <li key={item.id}>
-                <button
-                  onClick={() => onNavClick(item)}
-                  onMouseEnter={() => onHoverItem(item.id)}
-                  onMouseLeave={() => onHoverItem(null)}
-                  className={cn(
-                    styles.navItemDesktop,
-                    conditionalStyles.desktopNavItemState(isActive, isHovered)
-                  )}
-                  aria-current={isActive ? 'page' : undefined}
-                >
-                  <Icon size={20} className={styles.icon} aria-hidden="true" />
-                  <span
+            if (
+              item.id !== 'evaluation' ||
+              (userRole === 'MEMBER' &&
+                evaluationStatus === 'PEER_EVALUATION') ||
+              (userRole === 'MANAGER' &&
+                evaluationStatus === 'MANAGER_EVALUATION')
+            ) {
+              return (
+                <li key={item.id}>
+                  <button
+                    onClick={() => onNavClick(item)}
+                    onMouseEnter={() => onHoverItem(item.id)}
+                    onMouseLeave={() => onHoverItem(null)}
                     className={cn(
-                      styles.textTransition,
-                      conditionalStyles.textVisibility(isCollapsed)
+                      styles.navItemDesktop,
+                      conditionalStyles.desktopNavItemState(isActive, isHovered)
                     )}
+                    aria-current={isActive ? 'page' : undefined}
                   >
-                    {item.label}
-                  </span>
-                </button>
-              </li>
-            )
+                    <Icon
+                      size={20}
+                      className={styles.icon}
+                      aria-hidden="true"
+                    />
+                    <span
+                      className={cn(
+                        styles.textTransition,
+                        conditionalStyles.textVisibility(isCollapsed)
+                      )}
+                    >
+                      {item.label}
+                    </span>
+                  </button>
+                </li>
+              )
+            }
           })}
         </ul>
       </nav>

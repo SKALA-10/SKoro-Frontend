@@ -1,13 +1,15 @@
 import { X } from 'lucide-react'
-import { keywordOptions } from '../../constants/peerEvaluation'
+import { useEffect, useState } from 'react'
+import PeerEvaluationService from '../../services/PeerEvaluation'
+// import { keywordOptions } from '../../constants/peerEvaluation'
 
 const PeerKeyword: React.FC<{
-  selectedKeywords: string[]
+  selectedKeywords: number[]
   customKeywords: string[]
   onCustomKeywordRemove: (keyword: string) => void
   onAdditionalKeywords: (e: React.FormEvent<HTMLFormElement>) => void
   onSubmit: () => void
-  onKeywordToggle: (keyword: string) => void
+  onKeywordToggle: (keyword: number) => void
 }> = ({
   selectedKeywords,
   customKeywords,
@@ -16,6 +18,20 @@ const PeerKeyword: React.FC<{
   onSubmit,
   onKeywordToggle,
 }) => {
+  const [keywordOptions, setKeywordOptions] = useState<string[] | null>([])
+  useEffect(() => {
+    // 기본 키워드 전체 조회
+    PeerEvaluationService.getPeerEvaluationKeywords()
+      .then((response) => {
+        console.log('기본 키워드 조회 성공:', response)
+        setKeywordOptions(response)
+      })
+      .catch((error) => {
+        console.error('기본 키워드 조회 실패:', error)
+        setKeywordOptions(null)
+      })
+  }, [])
+
   return (
     <div className="flex-1 flex flex-col">
       <div className="mb-4">
@@ -28,17 +44,18 @@ const PeerKeyword: React.FC<{
       </div>
 
       <div className="grid grid-cols-7 gap-2 mb-8">
-        {keywordOptions.map((keyword) => (
+        {keywordOptions?.map((keyword: any) => (
           <button
-            key={keyword}
-            onClick={() => onKeywordToggle(keyword)}
+            key={keyword.keywordId}
+            onClick={() => onKeywordToggle(keyword.keywordId)}
+            style={{ wordBreak: 'keep-all' }}
             className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
-              selectedKeywords.includes(keyword)
+              selectedKeywords.includes(keyword.keywordId)
                 ? 'bg-blue-500 text-white border-blue-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'
             }`}
           >
-            {keyword}
+            {keyword.keywordName}
           </button>
         ))}
       </div>
@@ -69,7 +86,7 @@ const PeerKeyword: React.FC<{
           </form>
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-4 flex-1 min-h-0 overflow-auto">
           {customKeywords.map((keyword) => (
             <div
               key={keyword}
@@ -90,7 +107,14 @@ const PeerKeyword: React.FC<{
       <div className="flex justify-end mt-auto">
         <button
           onClick={onSubmit}
-          className="px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600"
+          className={`px-10 py-3 rounded-lg font-medium
+            mt-auto
+            ${
+              selectedKeywords.length !== 0
+                ? 'bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
+          disabled={selectedKeywords.length === 0}
         >
           평가 저장하기
         </button>

@@ -1,4 +1,4 @@
-import { lazy, useEffect } from 'react'
+import { lazy, useEffect, useState } from 'react'
 import {
   BrowserRouter as Router,
   Route,
@@ -19,6 +19,8 @@ const pageNames = [
   'PeerEvaluationPage',
   'MemberEvaluationPage',
   'AdminPage',
+  'KPIPage',
+  'AdminLogicPage',
 ]
 
 const pages: Record<string, React.LazyExoticComponent<React.FC>> = {}
@@ -36,13 +38,19 @@ export const [
   PeerEvaluationPage,
   MemberEvaluationPage,
   AdminPage,
+  KPIPage,
+  AdminLogicPage,
 ] = pageNames.map((name) => lazy(() => import(`./pages/${name}`)))
 
 function App() {
+  const [userRole, setUserRole] = useState<string | null>(
+    useUserInfoStore.getState().role || 'MEMBER'
+  )
+  const userInfo = sessionStorage.getItem('SKoroUserInfo')
   useEffect(() => {
-    const userInfo = sessionStorage.getItem('SKoroUserInfo')
     if (userInfo) {
       useUserInfoStore.getState().setUserInfo(JSON.parse(userInfo))
+      setUserRole(useUserInfoStore.getState().role || 'MEMBER')
     } else {
       useUserInfoStore.getState().logout()
     }
@@ -54,12 +62,32 @@ function App() {
         <Route path="/login" element={<LoginGuard />} />
         <Route path="/" element={<MainRoute />} />
         <Route element={<ProtectedRoute />}>
+          <Route path="/logic" element={<AdminLogicPage />} />
           <Route path="/team" element={<TeamPage />} />
           <Route path="/team/:id" element={<MemberReportPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/final" element={<FinalPage />} />
-          <Route path="/evaluation" element={<FinalEvaluationPage />} />
-          <Route path="/evaluation/:id" element={<MemberEvaluationPage />} />
+          <Route
+            path="/evaluation"
+            element={
+              userRole === 'MEMBER' ? (
+                <PeerEvaluationPage />
+              ) : (
+                <FinalEvaluationPage />
+              )
+            }
+          />
+          <Route
+            path="/evaluation/:id"
+            element={
+              userRole === 'MEMBER' ? (
+                <PeerEvaluationPage />
+              ) : (
+                <MemberEvaluationPage />
+              )
+            }
+          />
+          <Route path="/team-goal" element={<KPIPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

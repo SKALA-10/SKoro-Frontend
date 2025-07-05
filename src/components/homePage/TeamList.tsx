@@ -1,25 +1,40 @@
 import { Avatar } from '../common'
-import { teamMembers } from '../../dummy/teamMembers'
+import { feedbackTeamMembers } from '../../dummy/teamMembers'
 import { useEffect, useRef } from 'react'
 import { useState } from 'react'
 
 interface TeamMemberWithEvaluation {
   id: number
-  name: string
+  empName: string
   avatar: string
   isEvaluated: boolean // 평가 완료 여부
 }
 
-const TeamList: React.FC = () => {
+const TeamList: React.FC<{
+  employees?: any[]
+}> = ({ employees }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const SCROLL_POSITION_KEY = 'teamlist-scroll-position'
 
-  const [enhancedTeamMembers] = useState<TeamMemberWithEvaluation[]>(() => {
-    return teamMembers.map((member, index) => ({
+  const [enhancedTeamMembers, setEnhancedTeamMembers] = useState<
+    TeamMemberWithEvaluation[]
+  >(() => {
+    return (employees || feedbackTeamMembers).map((member, index) => ({
       ...member,
       isEvaluated: index % 3 === 0, // 3명 중 1명씩 평가 완료로 임시 설정
     }))
   })
+
+  useEffect(() => {
+    if (employees) {
+      setEnhancedTeamMembers(
+        employees.map((member, index) => ({
+          ...member,
+          isEvaluated: index % 3 === 0, // 3명 중 1명씩 평가 완료로 임시 설정
+        }))
+      )
+    }
+  }, [employees])
 
   // 컴포넌트 마운트 시 저장된 스크롤 위치 복원
   useEffect(() => {
@@ -60,10 +75,10 @@ const TeamList: React.FC = () => {
                 className={`flex flex-col items-center min-w-16 max-w-16 truncate transition-opacity duration-200`}
               >
                 <span className="text-2xl relative">
-                  <Avatar avatar={member.avatar} size="md" />
+                  <Avatar avatar={member.avatar || '👤'} size="md" />
                 </span>
                 <span className="mt-2 text-xs font-semibold">
-                  {member.name}
+                  {member.empName}
                 </span>
               </button>
             )

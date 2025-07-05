@@ -2,13 +2,23 @@ import { useState, useRef, useEffect } from 'react'
 import { Download, ChevronLeft } from 'lucide-react'
 import type { FeedbackReportProps, Tab } from '../../types/Report.types'
 import { styles } from '.'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import ReportService from '../../services/ReportService'
+import { useUserInfoStore } from '../../store/useUserInfoStore'
+
+import html2pdf from 'html2pdf.js'
+import { managerFeedbackReportDummy } from '../../dummy/report'
 
 const Report: React.FC<FeedbackReportProps> = ({
   selectedYear,
   selectedRating,
   type,
   memberName,
+  selectedPeriod,
+  memberEmpNo,
+  evaluationReasons,
+  periodId,
+  viewerType = '',
 }) => {
   const [activeTab, setActiveTab] = useState<string>('report')
   const [indicatorStyle, setIndicatorStyle] = useState<{
@@ -21,19 +31,6 @@ const Report: React.FC<FeedbackReportProps> = ({
 
   const tabRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({})
   const containerRef = useRef<HTMLDivElement>(null)
-
-  const tabs: Tab[] = [
-    {
-      id: 'report',
-      label: `${selectedYear} ${selectedRating} 레포트`,
-      content: '여기에 최종 평가 레포트 내용이 표시됩니다.',
-    },
-    {
-      id: 'summary',
-      label: '팀원 의견 요약',
-      content: '여기에 팀원 의견 요약 내용이 표시됩니다.',
-    },
-  ]
 
   const updateIndicator = (tabId: string) => {
     const tabElement = tabRefs.current[tabId]
@@ -78,9 +75,227 @@ const Report: React.FC<FeedbackReportProps> = ({
     return () => window.removeEventListener('resize', handleResize)
   }, [activeTab, type])
 
+  const [reportContent, setReportContent] = useState<any>('')
+  const location = useLocation()
+  const member = location.state?.member || null
+  const period = location.state?.selectedPeriod || null
+  const [managerFeedback, setManagerFeedback] = useState<string>('')
+  const role = useUserInfoStore((state) => state.role)
+  const userName = useUserInfoStore((state) => state.empName)
+
+  useEffect(() => {
+    console.log('temtm', type, periodId)
+    if (type === 'evaluation') {
+      if (periodId)
+        // [팀장] 해당 기간의 팀 중간 평가 레포트 조회 (임시)
+        EvaluationService.getMiddleReport(periodId || 0)
+          .then((report) => {
+            console.log('팀 중간 평가 레포트 조회 성공:', report)
+            setReportContent(
+              report.report || '팀 중간 평가 레포트 내용이 없습니다.'
+            )
+          })
+          .catch((error) => {
+            console.error('팀 중간 평가 레포트 조회 실패:', error)
+            setReportContent(
+              '팀 중간 평가 레포트 내용을 불러오는 데 실패했습니다.'
+            )
+          })
+    } else if (type === 'memberEvaluation') {
+    } else if (type != 'feedback') {
+      console.log('Report 컴포넌트가 마운트되었습니다.', member, period)
+      if (member && period) {
+        if (period.final) {
+          // [팀장] 팀원 최종 평가 레포트 조회
+          ReportService.getEmployeesFinalEvaluationReport(
+            member.empNo,
+            selectedPeriod ? selectedPeriod.periodId : 0
+          )
+            .then((report) => {
+              console.log('최종 평가 레포트 조회 성공:', report)
+            })
+            .catch((error) => {
+              console.error('최종 평가 레포트 조회 실패:', error)
+            })
+        } else {
+          // [팀장] 해당 기간의 팀원의 분기 평가 레포트 조회
+          ReportService.getEmployeesFeedbackReport(
+            member.empNo,
+            selectedPeriod ? selectedPeriod.periodId : 0
+          )
+            .then((report) => {
+              console.log('분기별 레포트 조회 성공:', report)
+            })
+            .catch((error) => {
+              console.error('분기별 레포트 조회 실패:', error)
+            })
+        }
+      }
+    }
+  }, [periodId])
+
+  useEffect(() => {
+    if (!selectedPeriod) return
+
+    if (member && selectedPeriod) {
+      if (selectedPeriod.final) {
+        // [팀장] 팀원 최종 평가 레포트 조회
+        ReportService.getEmployeesFinalEvaluationReport(
+          member.empNo,
+          selectedPeriod ? selectedPeriod.periodId : 0
+        )
+          .then((report) => {
+            console.log('최종 평가 레포트 조회 성공:', report)
+          })
+          .catch((error) => {
+            console.error('최종 평가 레포트 조회 실패:', error)
+          })
+      } else {
+        // [팀장] 해당 기간의 팀원의 분기 평가 레포트 조회
+        ReportService.getEmployeesFeedbackReport(
+          member.empNo,
+          selectedPeriod.periodId
+        )
+          .then((report) => {
+            console.log('분기별 레포트 조회 성공:', report)
+            setReportContent(report.report)
+          })
+          .catch((error) => {
+            console.error('개인 분기별 레포트 조회 실패:', error)
+            setReportContent(
+              '개인 분기별 레포트 내용을 불러오는 데 실패했습니다.'
+            )
+          })
+      }
+    } else if (type === 'feedback') {
+      if (role === 'MANAGER') {
+        if (!selectedPeriod?.periodId) return
+        // [팀장] 해당 기간의 팀 평가 레포트 조회
+        ReportService.getTeamEvaluationReport(selectedPeriod?.periodId || 0)
+          .then((report) => {
+            console.log('팀 평가 레포트 조회 성공:', report)
+            setReportContent(
+              report.report || '팀 분기별 레포트 내용이 없습니다.'
+            )
+          })
+          .catch((error) => {
+            console.error('팀 평가 레포트 조회 실패:', error)
+            setReportContent(
+              '팀 분기별 레포트 내용을 불러오는 데 실패했습니다.'
+            )
+          })
+      } else {
+        // 해당 기간의 본인의 분기 평가 레포트 조회
+        ReportService.getMyQuarterlyEvaluationReport(
+          selectedPeriod?.periodId || 0
+        )
+          .then((report) => {
+            console.log('분기별 레포트 조회 성공:', report)
+            setReportContent(report.report || '')
+          })
+          .catch((error) => {
+            console.error('분기별 레포트 조회 실패:', error)
+            setReportContent('')
+          })
+      }
+    } else {
+      if (role === 'MANAGER') {
+        ReportService.getTeamEvaluationReport(selectedPeriod?.periodId || 0)
+          .then((report) => {
+            console.log('팀 평가 레포트 조회 성공:', report)
+            setReportContent(
+              report.report || '팀 분기별 레포트 내용이 없습니다.'
+            )
+          })
+          .catch((error) => {
+            console.error('팀 평가 레포트 조회 실패:', error)
+            setReportContent(
+              '팀 분기별 레포트 내용을 불러오는 데 실패했습니다.'
+            )
+          })
+        if (role === 'MANAGER') {
+          ReportService.getEvaluationFeedbackSummary(
+            selectedPeriod?.periodId || 0
+          )
+            .then((summary) => {
+              console.log('팀장 평가 피드백 요약 조회 성공:', summary)
+              setManagerFeedback(
+                summary.content || '팀장 평가 피드백 요약 내용이 없습니다.'
+              )
+            })
+            .catch((error) => {
+              console.error('팀장 평가 피드백 요약 조회 실패:', error)
+              setManagerFeedback(
+                '팀장 평가 피드백 요약 내용을 불러오는 데 실패했습니다.'
+              )
+            })
+        }
+      } else {
+        ReportService.getMyFinalEvaluationReport(selectedPeriod?.periodId || 0)
+          .then((report) => {
+            console.log('최종 평가 레포트 조회 성공:', report)
+            setReportContent(
+              report.report || '개인 최종 평가 레포트 내용이 없습니다.'
+            )
+          })
+          .catch((error) => {
+            console.error('최종 평가 레포트 조회 실패:', error)
+            setReportContent(
+              '개인 최종 평가 레포트 내용을 불러오는 데 실패했습니다.'
+            )
+          })
+      }
+    }
+  }, [member, selectedPeriod])
+
+  const tabs: Tab[] = [
+    {
+      id: 'report',
+      label: `${selectedYear} ${selectedRating} 레포트`,
+      content: reportContent,
+    },
+    {
+      id: 'summary',
+      label: '팀원 의견 요약',
+      content: managerFeedbackReportDummy,
+    },
+  ]
+  const containerRef2 = useRef<HTMLDivElement>(null)
+
+  // HTML을 PDF로 변환하는 함수
+  function downloadReportPDF() {
+    console.log('레포트 PDF 다운로드 시작')
+
+    // 레포트 콘텐츠 영역 선택 (실제 클래스명에 맞게 수정 필요)
+    const reportElement = document.querySelector('.SKoro-report-section')
+
+    if (!reportElement) {
+      alert('레포트 영역을 찾을 수 없습니다.')
+      return
+    }
+    // html2pdf 라이브러리 사용
+    const opt = {
+      margin: 10,
+      filename: `${userName}_${selectedYear}_${selectedRating}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        letterRendering: true,
+      },
+      jsPDF: {
+        unit: 'mm',
+        format: 'a3',
+        orientation: 'portrait',
+      },
+    }
+    // PDF 생성 및 다운로드
+    html2pdf().set(opt).from(reportElement).save()
+  }
+
   return (
-    <section className={styles.reportSection}>
-      {type === 'final' ? (
+    <section className={`${styles.reportSection} flex flex-col h-full min-h-0`}>
+      {type === 'final' && role === 'MANAGER' ? (
         // 최종 평가 레포트
         <>
           <div className="w-full flex justify-between mt-[-8px] items-center">
@@ -123,20 +338,20 @@ const Report: React.FC<FeedbackReportProps> = ({
               />
             </div>
 
-            <button className={`${styles.reportButton} mb-2`}>
+            <button
+              className={`${styles.reportButton} mb-2`}
+              onClick={downloadReportPDF}
+              aria-label="레포트 다운로드"
+            >
               <Download className="inline-block w-5" />
             </button>
           </div>
 
           <article
-            className={`shadow-lg rounded-b-xl ${styles.reportContentArea} px-6 py-10 min-h-48 flex items-center justify-center text-lg `}
+            className={`shadow-lg rounded-xl ${styles.reportContentArea} px-6 py-10 flex-1 min-h-0 flex overflow-auto items-center justify-center text-lg`}
           >
-            <div className="text-center">
-              <h3 className="text-xl font-semibold mb-4">
-                {tabs.find((tab) => tab.id === activeTab)?.label}
-              </h3>
-              <p>{tabs.find((tab) => tab.id === activeTab)?.content}</p>
-            </div>
+            {activeTab === 'summary' && <MarkdownReportViewer />}
+            {activeTab === 'report' && <TeamFinalReport />}
           </article>
         </>
       ) : (
@@ -151,24 +366,49 @@ const Report: React.FC<FeedbackReportProps> = ({
                   ? '팀 통합 평가'
                   : type === 'memberEvaluation'
                   ? `${memberName} 님 평가 근거`
-                  : `${selectedYear} ${selectedRating} 레포트`}
+                  : `${selectedPeriod?.periodName} 레포트`}
               </h2>
             </div>
 
             {type !== 'memberEvaluation' && (
-              <button className={styles.reportButton}>
+              <button
+                className={styles.reportButton}
+                onClick={downloadReportPDF}
+              >
                 <Download className="inline-block w-5" />
               </button>
             )}
           </div>
 
           <article
-            className={`mt-2 rounded-xl ${styles.reportContentArea} p-5 min-h-0 overflow-auto`}
+            className={`mt-2 rounded-xl ${styles.reportContentArea} ${
+              type === 'memberEvaluation' ? '' : 'p-5'
+            } flex-1 min-h-0 overflow-auto flex-1 overflow-auto`}
           >
-            <p className="text-gray-500">
-              {selectedYear}년 {selectedRating} 레포트 내용이 여기에 표시됩니다.
-              이 레포트는 팀원들의 피드백과 평가를 기반으로 작성되었습니다.
-            </p>
+            {(userName === '' && type === 'feedback') ||
+            (viewerType === 'manager' && type === 'feedback') ? (
+              <MemberFeedbackReport report={reportContent} />
+            ) : userName === '' && type === 'final' ? (
+              <TeamTemporaryReport />
+            ) : // <TeamTemporaryReport />
+            type === 'feedback' && role === 'MEMBER' ? (
+              <MemberFeedbackReport report={reportContent} />
+            ) : type === 'final' && role === 'MEMBER' ? (
+              <MemberFinalReportCmp />
+            ) : type === 'feedback' && role === 'MANAGER' ? (
+              <TeamFeedbackReport />
+            ) : type === 'final' && role === 'MANAGER' ? (
+              <TeamFinalReport />
+            ) : type === 'memberEvaluation' ? (
+              <EvaluationReasonDisplay
+                memberEmpNo={memberEmpNo}
+                evaluationReasons={evaluationReasons}
+              />
+            ) : type === 'evaluation' ? (
+              <TeamTemporaryReport />
+            ) : (
+              <MemberFeedbackReport report={reportContent} />
+            )}
           </article>
         </>
       )}
@@ -205,5 +445,236 @@ const BackButton: React.FC = () => {
         className="text-gray-700 transition-colors duration-200 hover:text-gray-900"
       />
     </button>
+  )
+}
+
+import {
+  FileText,
+  Target,
+  TrendingUp,
+  Lightbulb,
+  CheckCircle,
+  AlertCircle,
+} from 'lucide-react'
+
+const MarkdownReportViewer = () => {
+  const managerFeedbackReport = managerFeedbackReportDummy
+
+  const parseMarkdown = (text: string) => {
+    const sections: {
+      title: string
+      items: { content: string; highlighted: boolean }[]
+    }[] = []
+
+    const lines = text.trim().split('\n')
+    let currentSection: {
+      title: string
+      items: { content: string; highlighted: boolean }[]
+    } | null = null
+
+    for (const line of lines) {
+      if (line.startsWith('## ')) {
+        if (currentSection) {
+          sections.push(currentSection)
+        }
+        currentSection = {
+          title: line.replace('## ', ''),
+          items: [],
+        }
+      } else if (line.startsWith('- ') && currentSection) {
+        const content = line.replace('- ', '')
+        const isHighlighted = content.includes('**')
+        currentSection.items.push({
+          content: content.replace(/\*\*/g, ''),
+          highlighted: isHighlighted,
+        })
+      }
+    }
+
+    if (currentSection) {
+      sections.push(currentSection)
+    }
+
+    return sections
+  }
+
+  const getSectionIcon = (index: number) => {
+    const icons = [Target, TrendingUp, Lightbulb]
+    const IconComponent = icons[index] || FileText
+    return IconComponent
+  }
+
+  const getSectionColor = (index: number) => {
+    const colors = [
+      'bg-blue-50 border-blue-200',
+      'bg-green-50 border-green-200',
+      'bg-purple-50 border-purple-200',
+    ]
+    return colors[index] || 'bg-gray-50 border-gray-200'
+  }
+
+  const getIconColor = (index: number) => {
+    const colors = ['text-blue-600', 'text-green-600', 'text-purple-600']
+    return colors[index] || 'text-gray-600'
+  }
+
+  const sections = parseMarkdown(managerFeedbackReport)
+
+  return (
+    <div className="h-full SKoro-report-section">
+      {/* 헤더 */}
+      <div className="mb-8 text-center" style={{ alignItems: 'center' }}>
+        <div
+          className="flex items-center justify-center mb-4"
+          style={{ alignItems: 'center' }}
+        >
+          <FileText className="w-8 h-8 text-gray-700 mr-3" />
+          <h1 className="text-xl font-bold text-gray-800">팀 피드백 보고서</h1>
+        </div>
+        <p className="text-sm text-gray-600">관리자 피드백 분석 및 개선 방향</p>
+        <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mt-4 rounded-full"></div>
+      </div>
+
+      {/* 섹션들 */}
+      <div className="space-y-8">
+        {sections.map((section, sectionIndex) => {
+          const IconComponent = getSectionIcon(sectionIndex)
+          const sectionColor = getSectionColor(sectionIndex)
+          const iconColor = getIconColor(sectionIndex)
+
+          return (
+            <div
+              key={sectionIndex}
+              className={`border-2 rounded-xl p-6 ${sectionColor} shadow-sm hover:shadow-md transition-shadow duration-200`}
+            >
+              <div
+                className="flex items-center mb-5"
+                style={{ alignItems: 'center' }}
+              >
+                <div
+                  className={`p-2 rounded-lg ${iconColor} bg-white shadow-sm mr-4`}
+                >
+                  <IconComponent className="w-6 h-6" />
+                </div>
+                <h2 className="text-lg font-bold text-gray-800">
+                  {section.title}
+                </h2>
+              </div>
+
+              <div className="space-y-4">
+                {section.items.map((item: any, itemIndex) => (
+                  <div
+                    key={itemIndex}
+                    className="flex items-center space-x-3"
+                    style={{ alignItems: 'center' }}
+                  >
+                    <div className="flex-shrink-0 mt-1">
+                      {item.highlighted ? (
+                        <AlertCircle className="w-5 h-5 text-amber-500" />
+                      ) : (
+                        <CheckCircle className="w-5 h-5 text-gray-400" />
+                      )}
+                    </div>
+                    <div
+                      className={`flex-1 p-4 rounded-lg ${
+                        item.highlighted
+                          ? 'bg-amber-50 border-l-4 border-amber-400 font-medium text-sm  text-amber-900'
+                          : 'bg-white text-sm'
+                      } shadow-sm text-gray-700 leading-relaxed content-center min-h-[max-content]`}
+                      style={{ alignItems: 'center' }}
+                    >
+                      {item.content}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* 푸터 */}
+      <div
+        className="mt-12 py-6 border-t border-gray-200 text-center"
+        style={{ alignItems: 'center' }}
+      >
+        <p className="text-sm text-gray-500">
+          생성일: {new Date().toLocaleDateString('ko-KR')} | 문서 유형: 팀
+          피드백 분석 보고서
+        </p>
+      </div>
+    </div>
+  )
+}
+
+import { MessageSquare } from 'lucide-react'
+import MemberFeedbackReport from './MemberFeedbackReport'
+import MemberFinalReportCmp from './MemberFinalReport'
+import TeamTemporaryReport from './TeamTemporaryReport'
+import TeamFeedbackReport from './TeamFeedbackReport'
+import TeamFinalReport from './TeamFinalReport'
+import EvaluationService from '../../services/EvaluationService'
+
+const EvaluationReasonDisplay: React.FC<{
+  memberEmpNo?: string
+  evaluationReasons?: any[]
+}> = ({ memberEmpNo, evaluationReasons }) => {
+  const location = useLocation()
+  const getEvaluationReasons = location.state.getEvaluationReasons || {}
+  const memberEvaluationReason =
+    getEvaluationReasons?.find((reason: any) => reason.empNo === memberEmpNo)
+      ?.aiReason || '평가 근거가 없습니다.'
+
+  console.log('EvaluationReasonDisplay 컴포넌트 상태:', {
+    getEvaluationReasons,
+    memberEvaluationReason,
+  })
+  console.log(location.state)
+
+  console.log(
+    'EvaluationReasonDisplay 컴포넌트 렌더링',
+    memberEmpNo,
+    evaluationReasons,
+    memberEvaluationReason
+  )
+
+  // 텍스트를 문장 단위로 분리하는 함수
+  const formatText = (text: string) => {
+    return text
+      .split(/(?<=\.)\s+/)
+      .filter((sentence) => sentence.trim().length > 0)
+      .map((sentence) => sentence.trim())
+  }
+
+  const sentences = formatText(memberEvaluationReason)
+
+  return (
+    <div className="flex flex-col h-full">
+      <div className="p-6 flex-1 overflow-auto">
+        <div className="space-y-4">
+          {sentences.map((sentence, index) => (
+            <div key={index} className="flex gap-3 group">
+              <div className="flex-shrink-0 w-1.5 h-1.5 bg-gray-300 rounded-full mt-3 group-hover:bg-blue-500 transition-colors"></div>
+              <p className="text-gray-700 leading-relaxed text-base">
+                {sentence}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 푸터 */}
+      <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 rounded-b-xl">
+        <div className="flex items-center justify-between text-sm text-gray-500">
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1">
+              <MessageSquare className="w-4 h-4" />
+              평가 근거
+            </span>
+          </div>
+          <span className="text-xs">{sentences.length}개 항목</span>
+        </div>
+      </div>
+    </div>
   )
 }

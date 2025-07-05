@@ -14,6 +14,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   onNavClick,
   onLogout,
   onClose,
+  evaluationStatus,
 }) => {
   if (!isOpen) return null
 
@@ -44,21 +45,28 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               const Icon = item.icon
               const isActive = activeItem === item.id
 
-              return (
-                <li key={item.id}>
-                  <button
-                    onClick={() => onNavClick(item)}
-                    className={cn(
-                      styles.navItem,
-                      conditionalStyles.navItemState(isActive)
-                    )}
-                    aria-current={isActive ? 'page' : undefined}
-                  >
-                    <Icon size={20} aria-hidden="true" />
-                    <span className="font-medium">{item.label}</span>
-                  </button>
-                </li>
+              if (
+                item.id !== 'evaluation' ||
+                (userRole === 'MEMBER' &&
+                  evaluationStatus === 'PEER_EVALUATION') ||
+                (userRole === 'MANAGER' &&
+                  evaluationStatus === 'MANAGER_EVALUATION')
               )
+                return (
+                  <li key={item.id}>
+                    <button
+                      onClick={() => onNavClick(item)}
+                      className={cn(
+                        styles.navItem,
+                        conditionalStyles.navItemState(isActive)
+                      )}
+                      aria-current={isActive ? 'page' : undefined}
+                    >
+                      <Icon size={20} aria-hidden="true" />
+                      <span className="font-medium">{item.label}</span>
+                    </button>
+                  </li>
+                )
             })}
           </ul>
 

@@ -130,27 +130,63 @@ export const chartData = [
 
 export const calendarEvents = [
   {
-    id: 1,
-    title: '프로젝트 검토',
-    start: new Date(2025, 4, 17), // 5월 17일
-    end: new Date(2025, 4, 18), // 5월 18일
-    color: '#3B82F6',
-    bgColor: '#DBEAFE',
+    periodId: 1,
+    year: 2024,
+    periodName: '1분기 피드백',
+    unit: 'QUARTER',
+    orderInYear: 1,
+    startDate: '2024-04-15',
+    endDate: '2024-04-15',
+    final: false,
   },
   {
-    id: 2,
-    title: '분기 평가',
-    start: new Date(2025, 4, 24), // 5월 24일
-    end: new Date(2025, 4, 25), // 5월 25일
-    color: '#EF4444',
-    bgColor: '#FEE2E2',
+    periodId: 2,
+    year: 2024,
+    periodName: '2분기 피드백',
+    unit: 'QUARTER',
+    orderInYear: 2,
+    startDate: '2024-07-15',
+    endDate: '2024-07-15',
+    final: false,
   },
   {
-    id: 3,
-    title: '팀 회의',
-    start: new Date(2025, 5, 2), // 6월 2일
-    end: new Date(2025, 5, 4), // 6월 4일
-    color: '#10B981',
-    bgColor: '#D1FAE5',
+    periodId: 3,
+    year: 2024,
+    periodName: '3분기 피드백',
+    unit: 'QUARTER',
+    orderInYear: 3,
+    startDate: '2024-10-15',
+    endDate: '2024-10-15',
+    final: false,
+  },
+  {
+    periodId: 4,
+    year: 2024,
+    periodName: '최종 평가',
+    unit: 'QUARTER',
+    orderInYear: 4,
+    startDate: '2024-12-01',
+    endDate: '2024-12-15',
+    final: true,
+  },
+  {
+    periodId: 5,
+    year: 2025,
+    periodName: '1분기 피드백',
+    unit: 'QUARTER',
+    orderInYear: 1,
+    startDate: '2025-06-12',
+    endDate: '2025-06-12',
+    final: false,
+  },
+  {
+    periodId: 6,
+    year: 2025,
+    periodName: '최종 평가',
+    unit: 'QUARTER',
+    orderInYear: 1,
+    startDate: '2025-07-07',
+    endDate: '2025-07-19',
+    final: true,
   },
 ]

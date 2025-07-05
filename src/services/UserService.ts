@@ -28,7 +28,7 @@ class UserService {
       {},
       {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('SKoroAccessToken')}`,
+          Authorization: `Bearer ${sessionStorage.getItem('SKoroAccessToken')}`,
         },
       }
     )
