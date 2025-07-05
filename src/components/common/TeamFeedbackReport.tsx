@@ -740,16 +740,6 @@ const TeamFeedbackReport = () => {
                 </tbody>
               </table>
             </div>
-
-            {/* 기여도 기준 설명 */}
-            {/* <div className="mt-6 p-4 bg-blue-50/70 rounded-lg">
-              <h3 className="text-md font-semibold text-blue-600 mb-2">
-                기여도 평가 기준
-              </h3>
-              <p className="text-blue-900 text-sm leading-relaxed">
-                {teamFeedbackReport.팀원_성과_분석.기여도_기준}
-              </p>
-            </div> */}
           </section>
 
           {/* 협업 네트워크 */}
