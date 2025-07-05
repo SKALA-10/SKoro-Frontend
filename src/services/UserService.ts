@@ -1,6 +1,6 @@
 import type { SignInResponse } from '../types/UserService'
 import { axiosInstance } from '../utils/axios'
-import { useUserInfoStore } from '../store/store'
+import { useUserInfoStore } from '../store/useUserInfoStore'
 
 class UserService {
   // 유저 로그인
@@ -28,7 +28,7 @@ class UserService {
       {},
       {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('SKoroAccessToken')}`,
+          Authorization: `Bearer ${sessionStorage.getItem('SKoroAccessToken')}`,
         },
       }
     )
