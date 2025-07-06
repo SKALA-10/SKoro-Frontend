@@ -9,26 +9,21 @@ import { useUserInfoStore } from './store/useUserInfoStore'
 import { FinalEvaluationPage } from './pages'
 import { MainRoute, ProtectedRoute, LoginGuard } from './components/router'
 
-const pageNames = [
-  'HomePage',
-  'LoginPage',
-  'TeamPage',
-  'MemberReportPage',
-  'FeedbackPage',
-  'FinalPage',
-  'PeerEvaluationPage',
-  'MemberEvaluationPage',
-  'AdminPage',
-  'KPIPage',
-  'AdminLogicPage',
-]
+export const pages: Record<string, React.LazyExoticComponent<React.FC>> = {
+  HomePage: lazy(() => import('./pages/HomePage')),
+  LoginPage: lazy(() => import('./pages/LoginPage')),
+  TeamPage: lazy(() => import('./pages/TeamPage')),
+  MemberReportPage: lazy(() => import('./pages/MemberReportPage')),
+  FeedbackPage: lazy(() => import('./pages/FeedbackPage')),
+  FinalPage: lazy(() => import('./pages/FinalPage')),
+  PeerEvaluationPage: lazy(() => import('./pages/PeerEvaluationPage')),
+  MemberEvaluationPage: lazy(() => import('./pages/MemberEvaluationPage')),
+  AdminPage: lazy(() => import('./pages/AdminPage')),
+  KPIPage: lazy(() => import('./pages/KPIPage')),
+  AdminLogicPage: lazy(() => import('./pages/AdminLogicPage')),
+}
 
-const pages: Record<string, React.LazyExoticComponent<React.FC>> = {}
-pageNames.forEach((name) => {
-  pages[name] = lazy(() => import(`./pages/${name}`))
-})
-
-export const [
+export const {
   HomePage,
   LoginPage,
   TeamPage,
@@ -40,7 +35,7 @@ export const [
   AdminPage,
   KPIPage,
   AdminLogicPage,
-] = pageNames.map((name) => lazy(() => import(`./pages/${name}`)))
+} = pages
 
 function App() {
   const [userRole, setUserRole] = useState<string | null>(
