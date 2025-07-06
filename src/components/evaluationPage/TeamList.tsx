@@ -25,12 +25,14 @@ const TeamList: React.FC<{
   setIsSubmitted?: (isSubmitted: boolean) => void
   teamEvaluationId?: number | null
   evaluationReasons?: any[]
+  setIsValidFinalSubmit?: (isValid: boolean) => void
 }> = ({
   periodId,
   isSubmitted,
   setIsSubmitted,
   teamEvaluationId,
   evaluationReasons,
+  setIsValidFinalSubmit,
 }) => {
   const { id } = useParams<{ id: string }>()
 
@@ -66,6 +68,14 @@ const TeamList: React.FC<{
         .then((data) => {
           console.log('팀원 리스트 조회 성공:', data)
           setFeedbackTeamMembers(data)
+          // 평가가 모두 완료됐을 때, setIsValidFinalSubmit을 true로 설정
+          if (setIsValidFinalSubmit) {
+            const allCompleted = data.every(
+              (member: any) => member.status === 'COMPLETED'
+            )
+            setIsValidFinalSubmit(allCompleted)
+          }
+
           if (isSubmitted) {
             const firstIncompleteMember = data.find(
               (member: any) =>
@@ -137,16 +147,23 @@ const TeamList: React.FC<{
       setSelectedMemberId(null)
       navigate('/evaluation') // 평가 페이지로 이동
     } else {
+      if (getEvaluationReasons || evaluationReasons) {
+      }
       setSelectedMemberId(memberId)
-      navigate(`/evaluation/${teamEvaluationId ? member.empNo : periodId}`, {
-        state: {
-          member,
-          periodId,
-          teamEvaluationId,
-          evaluationReasons,
-          getEvaluationReasons: getEvaluationReasons || evaluationReasons,
-        },
-      })
+      navigate(
+        `/${userRole === 'MANAGER' ? 'evaluation' : 'peertalk'}/${
+          teamEvaluationId ? member.empNo : periodId
+        }`,
+        {
+          state: {
+            member,
+            periodId,
+            teamEvaluationId,
+            evaluationReasons,
+            getEvaluationReasons: getEvaluationReasons || evaluationReasons,
+          },
+        }
+      )
     }
   }
 

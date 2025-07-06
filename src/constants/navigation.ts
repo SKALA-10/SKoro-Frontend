@@ -57,7 +57,7 @@ export const memberNavItems: NavItem[] = [
     id: 'evaluation',
     icon: PenTool,
     label: '동료 평가 시스템',
-    path: '/evaluation',
+    path: '/peertalk',
   },
 ]
 
