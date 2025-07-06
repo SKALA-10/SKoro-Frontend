@@ -608,171 +608,186 @@ const TeamTemporaryReport = () => {
               }
               className=""
             >
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              {/* <h2 className="text-2xl font-bold text-gray-800 mb-6">
                 팀원별 상세 평가
-              </h2>
+              </h2> */}
 
               {teamTemporaryReport.팀원별_평가_근거.map((member, index) => (
-                <div
-                  key={index}
-                  className="mb-8 last:mb-0 border border-gray-200  rounded-lg"
-                >
-                  <div className="pt-6 pb-4 pl-2 pr-4 rounded-t-lg border-b border-gray-200 mx-6">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <h3 className="text-xl font-bold mb-2">
-                          {member.기본_내용.이름}
+                <div className="page-break-before">
+                  {/* 첫 index에 대해서 h2 태그 제공 */}
+                  {index === 0 && (
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                      팀원별 상세 평가
+                    </h2>
+                  )}
+
+                  {/* 팀원 상세 평가 카드 */}
+                  <div
+                    key={index}
+                    style={{ marginBottom: '2rem' }}
+                    className="mb-8 last:mb-0 border border-gray-200 rounded-lg"
+                  >
+                    <div className="pt-6 pb-4 pl-2 pr-4 rounded-t-lg border-b border-gray-200 mx-6">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h3 className="text-xl font-bold mb-2">
+                            {member.기본_내용.이름}
+                          </h3>
+                          <p className="">
+                            {member.기본_내용.직무} • {member.기본_내용.CL_레벨}
+                          </p>
+                        </div>
+                        <div className="text-right flex gap-8">
+                          <div>
+                            <div className="text-2xl font-bold text-blue-600">
+                              {
+                                member.AI_점수_산출_기준[
+                                  'AI_추천_점수_CL_정규화'
+                                ]
+                              }
+                            </div>
+                            <div className="text-sm text-blue-500">
+                              AI 추천 점수
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="text-2xl font-bold text-blue-600">
+                              {member.연간_핵심_성과_기여도['개인_종합_달성률']}
+                              %
+                            </div>
+                            <div className="text-sm text-blue-500">
+                              개인 종합 달성률
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white p-6 space-y-6">
+                      <div className="p-4 bg-blue-50/70 rounded-lg">
+                        <h3 className="text-md font-semibold text-blue-600 mb-2">
+                          평가 근거 요약
                         </h3>
-                        <p className="">
-                          {member.기본_내용.직무} • {member.기본_내용.CL_레벨}
+                        <p className="text-blue-900 text-sm leading-relaxed">
+                          {member.연간_핵심_성과_기여도['종합_기여_코멘트']}
                         </p>
                       </div>
-                      <div className="text-right flex gap-8">
-                        <div>
-                          <div className="text-2xl font-bold text-blue-600">
-                            {member.AI_점수_산출_기준['AI_추천_점수_CL_정규화']}
-                          </div>
-                          <div className="text-sm text-blue-500">
-                            AI 추천 점수
-                          </div>
+
+                      {/* AI 점수 산출 기준 표 */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-4">
+                          <CheckCheck className="w-5 h-5 text-gray-600" />
+                          <h4 className="text-lg font-semibold text-gray-900">
+                            AI 점수 산출 기준
+                          </h4>
                         </div>
-
-                        <div>
-                          <div className="text-2xl font-bold text-blue-600">
-                            {member.연간_핵심_성과_기여도['개인_종합_달성률']}%
-                          </div>
-                          <div className="text-sm text-blue-500">
-                            개인 종합 달성률
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white p-6 space-y-6">
-                    <div className="p-4 bg-blue-50/70 rounded-lg">
-                      <h3 className="text-md font-semibold text-blue-600 mb-2">
-                        평가 근거 요약
-                      </h3>
-                      <p className="text-blue-900 text-sm leading-relaxed">
-                        {member.연간_핵심_성과_기여도['종합_기여_코멘트']}
-                      </p>
-                    </div>
-
-                    {/* AI 점수 산출 기준 표 */}
-                    <div>
-                      <div className="flex items-center gap-2 mb-4">
-                        <CheckCheck className="w-5 h-5 text-gray-600" />
-                        <h4 className="text-lg font-semibold text-gray-900">
-                          AI 점수 산출 기준
-                        </h4>
-                      </div>
-                      <div className="overflow-x-auto">
-                        <table className="w-full border-collapse border border-gray-200">
-                          <thead>
-                            <tr className="bg-gray-100 text-sm">
-                              <th className="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-900 text-center">
-                                평가 항목
-                              </th>
-                              <th className="border border-gray-200 px-4 py-3 text-center font-semibold text-gray-900">
-                                점수
-                              </th>
-                              <th className="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-900">
-                                평가 근거
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td className="border border-gray-200 px-4 py-3 font-medium text-gray-900 text-center bg-gray-50/70">
-                                업적
-                              </td>
-                              <td className="border border-gray-200 px-4 py-3 text-center">
-                                <span
-                                  className={`text-sm font-bold text-gray-800 px-3 py-1 rounded-full ${getScoreColor(
-                                    member.AI_점수_산출_기준.업적.점수
-                                  )}`}
-                                >
-                                  {member.AI_점수_산출_기준.업적.점수}
-                                </span>
-                              </td>
-                              <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700 leading-relaxed">
-                                {member.AI_점수_산출_기준.업적['실적_요약']}
-                              </td>
-                            </tr>
-                            {Object.entries(
-                              member.AI_점수_산출_기준.SK_Values
-                            ).map(([key, value]) => (
-                              <tr key={key} className="">
-                                <td className="border border-gray-200 px-4 py-3 font-medium text-red-400 bg-red-50/70 text-center">
-                                  {key}
+                        <div className="overflow-x-auto">
+                          <table className="w-full border-collapse border border-gray-200">
+                            <thead>
+                              <tr className="bg-gray-100 text-sm">
+                                <th className="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-900 text-center">
+                                  평가 항목
+                                </th>
+                                <th className="border border-gray-200 px-4 py-3 text-center font-semibold text-gray-900">
+                                  점수
+                                </th>
+                                <th className="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-900">
+                                  평가 근거
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td className="border border-gray-200 px-4 py-3 font-medium text-gray-900 text-center bg-gray-50/70">
+                                  업적
                                 </td>
                                 <td className="border border-gray-200 px-4 py-3 text-center">
                                   <span
                                     className={`text-sm font-bold text-gray-800 px-3 py-1 rounded-full ${getScoreColor(
-                                      value.점수
+                                      member.AI_점수_산출_기준.업적.점수
                                     )}`}
                                   >
-                                    {value.점수}
+                                    {member.AI_점수_산출_기준.업적.점수}
                                   </span>
                                 </td>
                                 <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700 leading-relaxed">
-                                  {value['평가_근거']}
+                                  {member.AI_점수_산출_기준.업적['실적_요약']}
                                 </td>
                               </tr>
-                            ))}
-                            <tr className="bg-blue-50/50">
-                              <td className="border border-gray-200 px-4 py-3 font-medium text-blue-900 text-center">
-                                종합 원점수
-                              </td>
-                              <td className="border border-gray-200 px-4 py-3 text-center">
-                                <span
-                                  className={`text-sm font-bold text-gray-800 px-3 py-1 rounded-full ${getScoreColor(
-                                    member.AI_점수_산출_기준['종합_원점수']
-                                  )}`}
-                                >
-                                  {member.AI_점수_산출_기준['종합_원점수']}
-                                </span>
-                              </td>
-                              <td className="border border-gray-200 px-4 py-3 text-sm text-blue-900 leading-relaxed">
-                                {member.AI_점수_산출_기준['평가_근거_요약']}
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                              {Object.entries(
+                                member.AI_점수_산출_기준.SK_Values
+                              ).map(([key, value]) => (
+                                <tr key={key} className="">
+                                  <td className="border border-gray-200 px-4 py-3 font-medium text-red-400 bg-red-50/70 text-center">
+                                    {key}
+                                  </td>
+                                  <td className="border border-gray-200 px-4 py-3 text-center">
+                                    <span
+                                      className={`text-sm font-bold text-gray-800 px-3 py-1 rounded-full ${getScoreColor(
+                                        value.점수
+                                      )}`}
+                                    >
+                                      {value.점수}
+                                    </span>
+                                  </td>
+                                  <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700 leading-relaxed">
+                                    {value['평가_근거']}
+                                  </td>
+                                </tr>
+                              ))}
+                              <tr className="bg-blue-50/50">
+                                <td className="border border-gray-200 px-4 py-3 font-medium text-blue-900 text-center">
+                                  종합 원점수
+                                </td>
+                                <td className="border border-gray-200 px-4 py-3 text-center">
+                                  <span
+                                    className={`text-sm font-bold text-gray-800 px-3 py-1 rounded-full ${getScoreColor(
+                                      member.AI_점수_산출_기준['종합_원점수']
+                                    )}`}
+                                  >
+                                    {member.AI_점수_산출_기준['종합_원점수']}
+                                  </span>
+                                </td>
+                                <td className="border border-gray-200 px-4 py-3 text-sm text-blue-900 leading-relaxed">
+                                  {member.AI_점수_산출_기준['평가_근거_요약']}
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* 연간 핵심 성과 기여도 */}
-                    <div>
-                      <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                        <TrendingUp className="w-5 h-5" />
-                        연간 핵심 성과 기여도
-                      </h4>
-                      <div className="overflow-x-auto">
-                        <table className="w-full border-collapse border border-gray-300 rounded-lg">
-                          <thead>
-                            <tr className="bg-gray-100 text-sm whitespace-nowrap">
-                              <th className="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-900 min-w-24">
-                                Task명
-                              </th>
-                              <th className="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-900">
-                                핵심 Task
-                              </th>
-                              <th className="border border-gray-200 px-4 py-3 text-center font-semibold text-gray-900">
-                                누적 달성률
-                              </th>
-                              <th className="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-900">
-                                분석 코멘트
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {member.연간_핵심_성과_기여도.Task_표.map(
-                              (task, taskIndex) => (
-                                <tr
-                                  key={taskIndex}
-                                  className={`
+                      {/* 연간 핵심 성과 기여도 */}
+                      <div>
+                        <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                          <TrendingUp className="w-5 h-5" />
+                          연간 핵심 성과 기여도
+                        </h4>
+                        <div className="overflow-x-auto">
+                          <table className="w-full border-collapse border border-gray-300 rounded-lg">
+                            <thead>
+                              <tr className="bg-gray-100 text-sm whitespace-nowrap">
+                                <th className="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-900 min-w-24">
+                                  Task명
+                                </th>
+                                <th className="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-900">
+                                  핵심 Task
+                                </th>
+                                <th className="border border-gray-200 px-4 py-3 text-center font-semibold text-gray-900">
+                                  누적 달성률
+                                </th>
+                                <th className="border border-gray-200 px-4 py-3 text-left font-semibold text-gray-900">
+                                  분석 코멘트
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {member.연간_핵심_성과_기여도.Task_표.map(
+                                (task, taskIndex) => (
+                                  <tr
+                                    key={taskIndex}
+                                    className={`
                                     hover:bg-gray-50 transition-colors duration-200 leading-relaxed
                                     ${
                                       taskIndex % 2 === 0
@@ -780,64 +795,65 @@ const TeamTemporaryReport = () => {
                                         : 'bg-gray-50/50'
                                     }
                                   `}
-                                >
-                                  <td className="border border-gray-200 px-4 py-3 font-medium text-sm break-keep text-gray-900">
-                                    {task.Task명}
-                                  </td>
-                                  <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700 leading-relaxed">
-                                    {task['핵심_Task']}
-                                  </td>
-                                  <td className="border border-gray-200 px-4 py-3 text-center">
-                                    <span
-                                      className={`text-sm font-bold text-gray-800 px-3 py-1 rounded-full border ${getAchievementColor(
-                                        task['누적_달성률_퍼센트']
-                                      )}`}
-                                    >
-                                      {task['누적_달성률_퍼센트']}%
-                                    </span>
-                                  </td>
-                                  <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700 leading-relaxed">
-                                    {task['분석_코멘트']}
-                                  </td>
-                                </tr>
-                              )
-                            )}
-                          </tbody>
-                        </table>
+                                  >
+                                    <td className="border border-gray-200 px-4 py-3 font-medium text-sm break-keep text-gray-900">
+                                      {task.Task명}
+                                    </td>
+                                    <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700 leading-relaxed">
+                                      {task['핵심_Task']}
+                                    </td>
+                                    <td className="border border-gray-200 px-4 py-3 text-center">
+                                      <span
+                                        className={`text-sm font-bold text-gray-800 px-3 py-1 rounded-full border ${getAchievementColor(
+                                          task['누적_달성률_퍼센트']
+                                        )}`}
+                                      >
+                                        {task['누적_달성률_퍼센트']}%
+                                      </span>
+                                    </td>
+                                    <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700 leading-relaxed">
+                                      {task['분석_코멘트']}
+                                    </td>
+                                  </tr>
+                                )
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Peer Talk 평가 */}
-                    <div>
-                      <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                        <MessageSquare className="w-5 h-5" />
-                        Peer Talk 평가
-                      </h4>
+                      {/* Peer Talk 평가 */}
+                      <div>
+                        <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                          <MessageSquare className="w-5 h-5" />
+                          Peer Talk 평가
+                        </h4>
 
-                      <div className="flex gap-6">
-                        <div className="flex-1 p-6 bg-green-50/70 border-l-4 border-green-300 rounded-r-lg">
-                          <h4 className="text-md font-semibold text-green-800 mb-3">
-                            강점
-                          </h4>
-                          <p className="text-sm text-gray-700 leading-relaxed">
-                            {member.Peer_Talk.강점}
-                          </p>
-                        </div>
-                        <div className="flex-1 p-6 bg-yellow-50/70 border-l-4 border-yellow-300 rounded-r-lg">
-                          <h4 className="text-md font-semibold text-yellow-800 mb-3">
-                            우려
-                          </h4>
-                          <p className="text-sm text-gray-700 leading-relaxed">
-                            {member.Peer_Talk.우려}
-                          </p>
-                        </div>
-                        <div className="flex-1 p-6 bg-blue-50/70 border-l-4 border-blue-300 rounded-r-lg">
-                          <h4 className="text-md font-semibold text-blue-800 mb-3">
-                            협업 관찰
-                          </h4>
-                          <p className="text-sm text-gray-700 leading-relaxed">
-                            {member.Peer_Talk['협업_관찰']}
-                          </p>
+                        <div className="flex gap-6">
+                          <div className="flex-1 p-6 bg-green-50/70 border-l-4 border-green-300 rounded-r-lg">
+                            <h4 className="text-md font-semibold text-green-800 mb-3">
+                              강점
+                            </h4>
+                            <p className="text-sm text-gray-700 leading-relaxed">
+                              {member.Peer_Talk.강점}
+                            </p>
+                          </div>
+                          <div className="flex-1 p-6 bg-yellow-50/70 border-l-4 border-yellow-300 rounded-r-lg">
+                            <h4 className="text-md font-semibold text-yellow-800 mb-3">
+                              우려
+                            </h4>
+                            <p className="text-sm text-gray-700 leading-relaxed">
+                              {member.Peer_Talk.우려}
+                            </p>
+                          </div>
+                          <div className="flex-1 p-6 bg-blue-50/70 border-l-4 border-blue-300 rounded-r-lg">
+                            <h4 className="text-md font-semibold text-blue-800 mb-3">
+                              협업 관찰
+                            </h4>
+                            <p className="text-sm text-gray-700 leading-relaxed">
+                              {member.Peer_Talk['협업_관찰']}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>

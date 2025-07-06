@@ -340,6 +340,17 @@ const AdminPage: React.FC = () => {
           alert('최종 평가 시작에 실패했습니다. 다시 시도해주세요.')
           return
         })
+    } else if (action === 'EVALUATION_FEEDBACK') {
+      AdminService.summarizeFeedback()
+        .then(() => {
+          console.log('피드백 요약이 성공적으로 완료되었습니다.')
+          handleNextPhase(periodId, 'EVALUATION_FEEDBACK')
+        })
+        .catch((error) => {
+          console.error('피드백 요약 실패:', error)
+          alert('피드백 요약에 실패했습니다. 다시 시도해주세요.')
+          return
+        })
     } else {
       handleNextPhase(periodId, action)
     }

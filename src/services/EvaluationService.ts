@@ -141,5 +141,25 @@ class EvaluationService {
     console.log('EvaluationService.getMiddleReport response:', response.data)
     return response.data
   }
+
+  // [팀장] 하향 평가 제출
+  public static async submitTeamEvaluation(
+    teamEvaluationId: number
+  ): Promise<any> {
+    const response = await axiosInstance.put(
+      `/team-evaluation/${teamEvaluationId}/submit`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('SKoroAccessToken')}`,
+        },
+      }
+    )
+    console.log(
+      'EvaluationService.submitTeamEvaluation response:',
+      response.data
+    )
+    return response.data
+  }
 }
 export default EvaluationService

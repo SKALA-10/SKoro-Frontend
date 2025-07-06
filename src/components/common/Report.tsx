@@ -262,18 +262,26 @@ const Report: React.FC<FeedbackReportProps> = ({
   ]
   const containerRef2 = useRef<HTMLDivElement>(null)
 
-  // HTML을 PDF로 변환하는 함수
   function downloadReportPDF() {
     console.log('레포트 PDF 다운로드 시작')
 
-    // 레포트 콘텐츠 영역 선택 (실제 클래스명에 맞게 수정 필요)
     const reportElement = document.querySelector('.SKoro-report-section')
-
     if (!reportElement) {
       alert('레포트 영역을 찾을 수 없습니다.')
       return
     }
-    // html2pdf 라이브러리 사용
+
+    // 1. 최하위 요소에 클래스 추가
+    const leafNodes = Array.from(reportElement.querySelectorAll('*')).filter(
+      (el) => el.children.length === 0
+    )
+    leafNodes.forEach((el) => el.classList.add('avoid-page-break'))
+
+    // 2. 모든 <tr>에 클래스 추가
+    const tableRows = reportElement.querySelectorAll('tr')
+    tableRows.forEach((tr) => tr.classList.add('avoid-page-break'))
+
+    // ▶ html2pdf 옵션
     const opt = {
       margin: 10,
       filename: `${userName}_${selectedYear}_${selectedRating}.pdf`,
@@ -288,9 +296,20 @@ const Report: React.FC<FeedbackReportProps> = ({
         format: 'a3',
         orientation: 'portrait',
       },
+      pagebreak: {
+        mode: ['css'],
+      },
     }
-    // PDF 생성 및 다운로드
-    html2pdf().set(opt).from(reportElement).save()
+
+    // ▶ PDF 저장
+    html2pdf()
+      .set(opt)
+      .from(reportElement)
+      .save()
+      .then(() => {
+        // 저장 후 클래스 제거 (clean up)
+        leafNodes.forEach((el) => el.classList.remove('avoid-page-break'))
+      })
   }
 
   return (
@@ -387,6 +406,11 @@ const Report: React.FC<FeedbackReportProps> = ({
           >
             {(userName === '' && type === 'feedback') ||
             (viewerType === 'manager' && type === 'feedback') ? (
+              // <TeamFeedbackReport />
+              // <MemberFinalReportCmp />
+              // <MemberFeedbackReport report={reportContent} />
+              // <TeamFinalReport />
+              // <TeamTemporaryReport />
               <MemberFeedbackReport report={reportContent} />
             ) : userName === '' && type === 'final' ? (
               <TeamTemporaryReport />

@@ -228,5 +228,21 @@ class AdminService {
     console.log('AdminService.savePrompt response:', response.data)
     return response.data
   }
+
+  // 평가 피드백 요약
+  // /api/ai/chatbot-summary, post
+  public static async summarizeFeedback(): Promise<any> {
+    const response = await axiosInstance.post(
+      '/ai/chatbot-summary',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('SKoroAccessToken')}`,
+        },
+      }
+    )
+    console.log('AdminService.summarizeFeedback response:', response.data)
+    return response.data
+  }
 }
 export default AdminService

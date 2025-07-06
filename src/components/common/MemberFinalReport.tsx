@@ -269,7 +269,7 @@ const MemberFinalReportCmp = () => {
                       rowSpan={2}
                       className="font-semibold border border-gray-300 px-4 py-2"
                     >
-                      업적
+                      업적 점수
                     </th>
                     <th
                       colSpan={4}
@@ -316,7 +316,7 @@ const MemberFinalReportCmp = () => {
                     <td className="border border-gray-300 px-4 py-2">
                       {memberFinalReport.최종_평가.SK_Values.People} 점
                     </td>
-                    <td className="border border-gray-300 px-4 py-2">
+                    <td className="border border-gray-300 px-4 py-2 font-semibold text-blue-600">
                       {memberFinalReport.최종_평가.최종_점수} 점
                     </td>
                   </tr>
