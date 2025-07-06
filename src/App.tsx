@@ -62,26 +62,10 @@ function App() {
           <Route path="/team/:id" element={<MemberReportPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/final" element={<FinalPage />} />
-          <Route
-            path="/evaluation"
-            element={
-              userRole === 'MEMBER' ? (
-                <PeerEvaluationPage />
-              ) : (
-                <FinalEvaluationPage />
-              )
-            }
-          />
-          <Route
-            path="/evaluation/:id"
-            element={
-              userRole === 'MEMBER' ? (
-                <PeerEvaluationPage />
-              ) : (
-                <MemberEvaluationPage />
-              )
-            }
-          />
+          <Route path="/evaluation" element={<FinalEvaluationPage />} />
+          <Route path="/evaluation/:id" element={<MemberEvaluationPage />} />
+          <Route path="/peertalk" element={<PeerEvaluationPage />} />
+          <Route path="/peertalk/:id" element={<PeerEvaluationPage />} />
           <Route path="/team-goal" element={<KPIPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
