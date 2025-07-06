@@ -12,12 +12,14 @@ import {
 } from 'lucide-react'
 import { SKLogoWhite } from '../../assets/common'
 
-const TeamFinalReport = () => {
+const TeamFinalReport: React.FC<{
+  report: any
+}> = ({ report }) => {
   const [activeSection, setActiveSection] = useState('basic-info')
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
   // 실제 데이터 (예시)
-  const teamFinalReport = {
+  const dummyTeamFinalReport = {
     기본_정보: {
       팀명: 'W1팀',
       팀장명: '팀장A',
@@ -266,6 +268,7 @@ const TeamFinalReport = () => {
         "**[팀 성과 방향]**  \nW1팀은 연간 평균 달성률 132%를 기록하며 우수한 성과를 달성했습니다. 특히, 'AI powered ITS 혁신' KPI에서 175%의 진행률을 보이며 팀의 혁신 역량을 입증했습니다. 그러나 전년 대비 성장률이 없다는 점은 향후 지속적인 성장을 위해 해결해야 할 과제로 남아 있습니다. 이러한 성과는 팀의 전략적 방향성과 성과 창출 능력을 강화하는 데 기여하고 있습니다.\n\n**[구조적 인식]**  \nW1팀의 조직적 강점은 높은 평균 달성률과 중간평가 평균 3.5점으로 나타나는 팀원 간의 협력과 성과 지향적인 문화입니다. 그러나 '저성과자에 의한 팀 사기 저하'와 '기여도 불균형 리스크'는 팀의 사기와 효율성을 저해할 수 있는 구조적 도전과제로, 이를 해결하지 않으면 지속 가능한 성장에 부정적인 영향을 미칠 수 있습니다. 따라서 팀의 성과를 극대화하기 위해서는 이러한 리스크를 관리하는 것이 필수적입니다.\n\n**[향후 운영 전략]**  \n차년도 계획은 아직 구체화되지 않았으나, W1팀은 '매출이익 감소 리스크'를 해결하기 위해 매출이익 KPI의 진행률을 90%에서 최소 120%로 끌어올리는 것을 목표로 설정해야 합니다. 이를 위해 팀원 간의 역할 분담을 명확히 하고, 저성과자에 대한 맞춤형 지원 프로그램을 도입하여 팀 전체의 사기를 높이는 전략을 추진할 필요가 있습니다. 또한, 고성과자의 번아웃 위험을 방지하기 위해 업무 분담의 균형을 맞추고, 정기적인 피드백 세션을 통해 팀원들의 의견을 수렴하는 것이 중요합니다.",
     },
   }
+  const teamFinalReport = report || dummyTeamFinalReport
 
   const tableOfContents = [
     { id: 'basic-info', title: '기본 정보', icon: Users },
@@ -530,7 +533,7 @@ const TeamFinalReport = () => {
                   <tbody className="bg-white divide-y divide-gray-200">
                     {teamFinalReport['팀_업무_목표_및_달성률'][
                       '업무목표표'
-                    ].map((goal, index) => (
+                    ].map((goal: any, index: any) => (
                       <tr
                         key={index}
                         className={`hover:bg-gray-50 transition-colors duration-200 
@@ -627,7 +630,7 @@ const TeamFinalReport = () => {
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {teamFinalReport['팀_성과_요약']['팀원별_성과_표'].map(
-                      (member, index) => (
+                      (member: any, index: any) => (
                         <tr
                           key={index}
                           className={`
@@ -702,7 +705,7 @@ const TeamFinalReport = () => {
               {/* 개별 성과 요약 */}
               <div className="space-y-4">
                 {teamFinalReport['팀_성과_요약']['팀원별_성과_표'].map(
-                  (member, index) => (
+                  (member: any, index: any) => (
                     <div className="mt-6 p-4 bg-gray-50/70 rounded-lg">
                       <div className="flex items-center gap-3 mb-2">
                         <CircleCheckBig className="w-5 h-5 text-gray-600" />
@@ -730,7 +733,7 @@ const TeamFinalReport = () => {
 
               {teamFinalReport['팀_조직력_및_리스크_요인'][
                 '주요_리스크_목록'
-              ].map((risk, index) => (
+              ].map((risk: any, index: any) => (
                 <div
                   key={index}
                   className={`rounded-xl p-6 border mb-6 ${getRiskSeverityColor(
@@ -764,7 +767,7 @@ const TeamFinalReport = () => {
                         <td className="py-2 font-semibold">발생 원인</td>
                         <td className="py-2">
                           <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
-                            {risk['발생_원인'].map((cause, idx) => (
+                            {risk['발생_원인'].map((cause: any, idx: any) => (
                               <li key={idx}>{cause}</li>
                             ))}
                           </ul>
@@ -786,7 +789,7 @@ const TeamFinalReport = () => {
                         </td>
                         <td className="py-2">
                           {risk['운영_개선_전략_제안'].map(
-                            (strategy, strategyIndex) => (
+                            (strategy: any, strategyIndex: any) => (
                               <li key={strategyIndex}>{strategy}</li>
                             )
                           )}
@@ -826,7 +829,7 @@ const TeamFinalReport = () => {
                   <tbody className="bg-white divide-y divide-gray-200">
                     {teamFinalReport['다음_연도_운영_제안'][
                       '핵심_인력_운용_전략'
-                    ].map((strategy, index) => (
+                    ].map((strategy: any, index: any) => (
                       <tr
                         key={index}
                         className={`
@@ -871,7 +874,7 @@ const TeamFinalReport = () => {
                   <tbody className="bg-white divide-y divide-gray-200">
                     {teamFinalReport['다음_연도_운영_제안'][
                       '협업_구조_개선_방향'
-                    ].map((direction, index) => (
+                    ].map((direction: any, index: any) => (
                       <tr
                         key={index}
                         className={`

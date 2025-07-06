@@ -95,8 +95,8 @@ const MemberFeedbackReport: React.FC<{
     총평: '김개발님, 이번 분기 동안의 성과에 대해 진심으로 축하드립니다! 60%의 달성률과 팀 내 1위의 성과는 귀하의 뛰어난 기여도를 잘 보여줍니다. 특히 AI 제안서 시스템 개발에서의 핵심 역할과 템플릿 엔진 구현을 통해 팀의 효율성을 크게 향상시킨 점은 매우 인상적입니다. \n\n협업률 100%는 팀워크의 중요성을 잘 나타내며, 귀하의 책임감 있는 자세가 팀에 긍정적인 영향을 미쳤음을 알 수 있습니다. 다만, 협업 편중도가 높아 과의존의 위험이 있으니, 다양한 팀원들과의 협업을 통해 균형을 맞추는 것이 좋겠습니다. \n\n앞으로는 Passionate, Proactive, Professional, People 각 영역에서의 성장을 위해 새로운 기술 습득이나 멘토링 활동을 추천드립니다. 이러한 노력이 귀하의 전문성을 더욱 강화할 것입니다. 계속해서 멋진 성과를 기대합니다!',
   }
 
-  // const memberFeedbackReport = report || dummymemberFeedbackReport // props로 받은 리포트 데이터
-  const memberFeedbackReport = dummymemberFeedbackReport // props로 받은 리포트 데이터
+  const memberFeedbackReport = report || dummymemberFeedbackReport // props로 받은 리포트 데이터
+  // const memberFeedbackReport = dummymemberFeedbackReport // props로 받은 리포트 데이터
 
   // if (report === '' || report === undefined) {
   //   return (

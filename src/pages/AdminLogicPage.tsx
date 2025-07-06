@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Goal } from 'lucide-react'
 import { Header } from '../components/common'
 import AdminService from '../services/AdminService'
+import useDocumentTitle from '../hooks/useDocumentTitle'
 
 interface EvaluationPeriod {
   periodId: number
@@ -22,6 +23,8 @@ interface EvaluationPeriod {
 }
 
 const AdminLogicPage: React.FC = () => {
+  useDocumentTitle('성과평가 로직 - SKoro')
+
   const [logic, setLogic] = useState<string>('')
   const [prevLogic, setPrevLogic] = useState<string>('')
 

@@ -175,19 +175,19 @@ const KPIDashboard: React.FC = () => {
             <table className="w-full text-xs sm:text-sm">
               <thead className="bg-blue-50">
                 <tr>
-                  <th className="px-2 sm:px-3 py-2 text-center font-medium text-blue-900 border-r border-gray-200">
+                  <th className="px-2 sm:px-3 py-2 text-center font-medium text-blue-900 border-r border-gray-200 w-1/5">
                     S
                   </th>
-                  <th className="px-2 sm:px-3 py-2 text-center font-medium text-blue-900 border-r border-gray-200">
+                  <th className="px-2 sm:px-3 py-2 text-center font-medium text-blue-900 border-r border-gray-200 w-1/5">
                     A
                   </th>
-                  <th className="px-2 sm:px-3 py-2 text-center font-medium text-blue-900 border-r border-gray-200">
+                  <th className="px-2 sm:px-3 py-2 text-center font-medium text-blue-900 border-r border-gray-200 w-1/5">
                     B
                   </th>
-                  <th className="px-2 sm:px-3 py-2 text-center font-medium text-blue-900 border-r border-gray-200">
+                  <th className="px-2 sm:px-3 py-2 text-center font-medium text-blue-900 border-r border-gray-200 w-1/5">
                     C
                   </th>
-                  <th className="px-2 sm:px-3 py-2 text-center font-medium text-blue-900">
+                  <th className="px-2 sm:px-3 py-2 text-center font-medium text-blue-900 w-1/5">
                     D
                   </th>
                 </tr>
@@ -280,7 +280,11 @@ const KPIDashboard: React.FC = () => {
                   className={`h-2 rounded-full ${getProgressBarColor(
                     task.achievementRate
                   )}`}
-                  style={{ width: `${task.achievementRate}%` }}
+                  style={{
+                    width: `${
+                      task.achievementRate > 100 ? 100 : task.achievementRate
+                    }%`,
+                  }}
                 ></div>
               </div>
               <div className="text-sm font-medium text-gray-700">
@@ -356,7 +360,11 @@ const KPIDashboard: React.FC = () => {
               <div className="w-24 bg-gray-200 rounded-full h-2">
                 <div
                   className={`h-2 rounded-full bg-[#3D8EFF]`}
-                  style={{ width: `${task.achievementRate}%` }}
+                  style={{
+                    width: `${
+                      task.achievementRate > 100 ? 100 : task.achievementRate
+                    }%`,
+                  }}
                 ></div>
               </div>
             </div>
@@ -467,7 +475,11 @@ const KPIDashboard: React.FC = () => {
                   className={`h-2 rounded-full ${getProgressBarColor(
                     item.achievementRate
                   )}`}
-                  style={{ width: `${item.achievementRate}%` }}
+                  style={{
+                    width: `${
+                      item.achievementRate > 100 ? 100 : item.achievementRate
+                    }%`,
+                  }}
                 ></div>
               </div>
               <div className="text-sm font-medium text-gray-700">
@@ -548,7 +560,11 @@ const KPIDashboard: React.FC = () => {
               <div className="w-24 bg-gray-200 rounded-full h-2">
                 <div
                   className={`h-2 rounded-full bg-[#3D8EFF]`}
-                  style={{ width: `${item.achievementRate}%` }}
+                  style={{
+                    width: `${
+                      item.achievementRate > 100 ? 100 : item.achievementRate
+                    }%`,
+                  }}
                 ></div>
               </div>
             </div>

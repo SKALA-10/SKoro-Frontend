@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { Header } from '../components/common'
 import AdminService from '../services/AdminService'
+import useDocumentTitle from '../hooks/useDocumentTitle'
 
 interface EvaluationPeriod {
   periodId: number
@@ -39,6 +40,8 @@ interface ReportModule {
 }
 
 const AdminPage: React.FC = () => {
+  useDocumentTitle('관리자 홈 - SKoro')
+
   const [startDate, setStartDate] = useState<Date>(() => {
     const today = new Date()
     return new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7)
@@ -859,10 +862,10 @@ const AdminPage: React.FC = () => {
                       </div>
                       <div>
                         <h3 className="text-md font-semibold text-green-700">
-                          KPI 생성 완료
+                          Task 생성 완료
                         </h3>
                         <p className="text-sm text-green-600">
-                          {currentYear}년도 개인 KPI가 설정되었습니다
+                          {currentYear}년도 개인 Task가 설정되었습니다
                         </p>
                       </div>
                     </>
@@ -873,10 +876,10 @@ const AdminPage: React.FC = () => {
                       </div>
                       <div>
                         <h3 className="text-md font-semibold text-amber-700">
-                          KPI 생성 필요
+                          Task 생성 필요
                         </h3>
                         <p className="text-sm text-amber-600">
-                          {currentYear}년도 개인 KPI를 생성해주세요
+                          {currentYear}년도 개인 Task를 생성해주세요
                         </p>
                       </div>
                     </>
@@ -900,9 +903,9 @@ const AdminPage: React.FC = () => {
                       <span>생성 중...</span>
                     </div>
                   ) : isKpiGenerated ? (
-                    `${currentYear}년도 KPI 생성 완료`
+                    `${currentYear}년도 Task 생성 완료`
                   ) : (
-                    `${currentYear}년도 개인 KPI 생성`
+                    `${currentYear}년도 개인 Task 생성`
                   )}
                 </button>
               </div>

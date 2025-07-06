@@ -91,9 +91,7 @@ const Report: React.FC<FeedbackReportProps> = ({
         EvaluationService.getMiddleReport(periodId || 0)
           .then((report) => {
             console.log('팀 중간 평가 레포트 조회 성공:', report)
-            setReportContent(
-              report.report || '팀 중간 평가 레포트 내용이 없습니다.'
-            )
+            setReportContent(report.report)
           })
           .catch((error) => {
             console.error('팀 중간 평가 레포트 조회 실패:', error)
@@ -146,6 +144,7 @@ const Report: React.FC<FeedbackReportProps> = ({
         )
           .then((report) => {
             console.log('최종 평가 레포트 조회 성공:', report)
+            setReportContent(report.report)
           })
           .catch((error) => {
             console.error('최종 평가 레포트 조회 실패:', error)
@@ -174,9 +173,7 @@ const Report: React.FC<FeedbackReportProps> = ({
         ReportService.getTeamEvaluationReport(selectedPeriod?.periodId || 0)
           .then((report) => {
             console.log('팀 평가 레포트 조회 성공:', report)
-            setReportContent(
-              report.report || '팀 분기별 레포트 내용이 없습니다.'
-            )
+            setReportContent(report.report)
           })
           .catch((error) => {
             console.error('팀 평가 레포트 조회 실패:', error)
@@ -191,7 +188,7 @@ const Report: React.FC<FeedbackReportProps> = ({
         )
           .then((report) => {
             console.log('분기별 레포트 조회 성공:', report)
-            setReportContent(report.report || '')
+            setReportContent(report.report)
           })
           .catch((error) => {
             console.error('분기별 레포트 조회 실패:', error)
@@ -203,9 +200,7 @@ const Report: React.FC<FeedbackReportProps> = ({
         ReportService.getTeamEvaluationReport(selectedPeriod?.periodId || 0)
           .then((report) => {
             console.log('팀 평가 레포트 조회 성공:', report)
-            setReportContent(
-              report.report || '팀 분기별 레포트 내용이 없습니다.'
-            )
+            setReportContent(report.report)
           })
           .catch((error) => {
             console.error('팀 평가 레포트 조회 실패:', error)
@@ -370,7 +365,9 @@ const Report: React.FC<FeedbackReportProps> = ({
             className={`shadow-lg rounded-xl ${styles.reportContentArea} px-6 py-10 flex-1 min-h-0 flex overflow-auto items-center justify-center text-lg`}
           >
             {activeTab === 'summary' && <MarkdownReportViewer />}
-            {activeTab === 'report' && <TeamFinalReport />}
+            {activeTab === 'report' && (
+              <TeamFinalReport report={reportContent} />
+            )}
           </article>
         </>
       ) : (
@@ -405,31 +402,31 @@ const Report: React.FC<FeedbackReportProps> = ({
             } flex-1 min-h-0 overflow-auto flex-1 overflow-auto`}
           >
             {(userName === '' && type === 'feedback') ||
-            (viewerType === 'manager' && type === 'feedback') ? (
-              // <TeamFeedbackReport />
-              // <MemberFinalReportCmp />
-              // <MemberFeedbackReport report={reportContent} />
-              // <TeamFinalReport />
-              // <TeamTemporaryReport />
-              <MemberFeedbackReport report={reportContent} />
+            (viewerType === 'manager' &&
+              type === 'feedback' &&
+              selectedPeriod?.final === false) ? (
+              <MemberFeedbackReport report={reportContent} /> // 팀장이 보는 팀원 피드백 레포트
+            ) : viewerType === 'manager' &&
+              type === 'feedback' &&
+              selectedPeriod?.final ? (
+              <MemberFinalReportCmp report={reportContent} /> // 팀장이 보는 팀원 최종 레포트
             ) : userName === '' && type === 'final' ? (
-              <TeamTemporaryReport />
-            ) : // <TeamTemporaryReport />
-            type === 'feedback' && role === 'MEMBER' ? (
-              <MemberFeedbackReport report={reportContent} />
+              <TeamTemporaryReport /> // 테스트용
+            ) : type === 'feedback' && role === 'MEMBER' ? (
+              <MemberFeedbackReport report={reportContent} /> // 팀원 피드백 레포트
             ) : type === 'final' && role === 'MEMBER' ? (
-              <MemberFinalReportCmp />
+              <MemberFinalReportCmp report={reportContent} /> // 팀원 최종 레포트
             ) : type === 'feedback' && role === 'MANAGER' ? (
-              <TeamFeedbackReport />
+              <TeamFeedbackReport report={reportContent} /> // 팀장 피드백 레포트
             ) : type === 'final' && role === 'MANAGER' ? (
-              <TeamFinalReport />
+              <TeamFinalReport report={reportContent} /> // 팀장 최종
             ) : type === 'memberEvaluation' ? (
               <EvaluationReasonDisplay
                 memberEmpNo={memberEmpNo}
                 evaluationReasons={evaluationReasons}
-              />
+              /> // 근거
             ) : type === 'evaluation' ? (
-              <TeamTemporaryReport />
+              <TeamTemporaryReport /> // 팀장 최종 임시 레포트
             ) : (
               <MemberFeedbackReport report={reportContent} />
             )}
@@ -547,7 +544,7 @@ const MarkdownReportViewer = () => {
   return (
     <div className="h-full SKoro-report-section">
       {/* 헤더 */}
-      <div className="mb-8 text-center" style={{ alignItems: 'center' }}>
+      {/* <div className="mb-8 text-center" style={{ alignItems: 'center' }}>
         <div
           className="flex items-center justify-center mb-4"
           style={{ alignItems: 'center' }}
@@ -557,7 +554,7 @@ const MarkdownReportViewer = () => {
         </div>
         <p className="text-sm text-gray-600">관리자 피드백 분석 및 개선 방향</p>
         <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mt-4 rounded-full"></div>
-      </div>
+      </div> */}
 
       {/* 섹션들 */}
       <div className="space-y-8">

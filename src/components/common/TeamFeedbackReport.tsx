@@ -13,12 +13,14 @@ import {
 } from 'lucide-react'
 import { SKLogoWhite } from '../../assets/common'
 
-const TeamFeedbackReport = () => {
+const TeamFeedbackReport: React.FC<{
+  report: any
+}> = ({ report }) => {
   const [activeSection, setActiveSection] = useState('basic-info')
   const sectionsRef = useRef<Record<string, HTMLDivElement | null>>({})
 
   // 샘플 데이터 - 실제 사용시에는 props로 받아오세요
-  const teamFeedbackReport = {
+  const dummyTeamFeedbackReport = {
     기본_정보: {
       팀명: 'W1팀',
       팀장명: '팀장A',
@@ -330,6 +332,7 @@ const TeamFeedbackReport = () => {
         '**[팀 성과 방향]**  \nW1팀은 연간 평균 달성률 67%로, KPI 4개 중 AI powered ITS 혁신과 Bilable Rate에서 각각 70%와 96%의 진척도를 보였으나, 매출과 매출이익은 각각 30%에 그쳐 전반적인 성과가 저조한 상황입니다. 상대적 성과 개선이 필요하며, 전년 대비 성장률이 없다는 점은 팀의 전략적 방향성을 재조정할 필요성을 시사합니다. 중간평가 평균 3.5점은 긍정적인 신호이나, 실질적인 성과 창출 능력은 부족한 것으로 평가됩니다.\n\n**[구조적 인식]**  \nW1팀의 강점은 Bilable Rate의 높은 진척도에서 나타나듯이, 팀원들이 가동률을 효과적으로 관리하고 있다는 점입니다. 그러나 과의존 위험, 매출 및 매출이익 저조, AI powered ITS 혁신 성과의 불균형, 소통 회피 경향 등은 지속 가능한 성장에 큰 도전 과제가 되고 있습니다. 이러한 리스크를 해결하기 위해서는 팀 내 소통을 강화하고, 매출 및 매출이익을 증대시킬 수 있는 전략적 접근이 필요합니다.\n\n**[향후 운영 전략]**  \n차년도 계획은 아직 구체화되지 않았으나, W1팀은 매출 및 매출이익 증대를 위한 전략적 우선순위를 설정해야 합니다. 이를 위해 AI powered ITS 혁신의 성과를 극대화하고, 매출 목표를 50%로 설정하여 실행 가능한 방안을 마련해야 합니다. 또한, 팀 내 소통을 활성화하고, 정기적인 피드백 세션을 통해 과의존 위험을 줄이며, 가동률 개선의 한계를 극복하기 위한 교육 및 훈련 프로그램을 도입할 필요가 있습니다.',
     },
   }
+  const teamFeedbackReport = report || dummyTeamFeedbackReport
 
   // 목차 구성
   const tableOfContents = [
@@ -603,7 +606,7 @@ const TeamFeedbackReport = () => {
                 </thead>
                 <tbody>
                   {teamFeedbackReport.팀_업무_목표_및_달성률.kpi_목록.map(
-                    (kpi, index) => (
+                    (kpi: any, index: any) => (
                       <tr
                         key={index}
                         className={`
@@ -695,7 +698,7 @@ const TeamFeedbackReport = () => {
                 </thead>
                 <tbody>
                   {teamFeedbackReport.팀원_성과_분석.팀원별_기여도.map(
-                    (member, index) => (
+                    (member: any, index: any) => (
                       <tr
                         key={index}
                         className={`
@@ -782,7 +785,7 @@ const TeamFeedbackReport = () => {
                 </thead>
                 <tbody>
                   {teamFeedbackReport.협업_네트워크.협업_매트릭스.map(
-                    (member, index) => (
+                    (member: any, index: any) => (
                       <tr
                         key={index}
                         className={`
@@ -803,14 +806,16 @@ const TeamFeedbackReport = () => {
                         </td>
                         <td className="border border-gray-300 px-3 py-3">
                           <div className="flex flex-wrap gap-1">
-                            {member['핵심_협업자'].map((collaborator, idx) => (
-                              <span
-                                key={idx}
-                                className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs"
-                              >
-                                {collaborator}
-                              </span>
-                            ))}
+                            {member['핵심_협업자'].map(
+                              (collaborator: any, idx: any) => (
+                                <span
+                                  key={idx}
+                                  className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs"
+                                >
+                                  {collaborator}
+                                </span>
+                              )
+                            )}
                           </div>
                         </td>
                         <td className="border border-gray-300 px-3 py-3 text-gray-700">
@@ -905,7 +910,7 @@ const TeamFeedbackReport = () => {
                   </thead>
                   <tbody>
                     {teamFeedbackReport.팀원별_코칭_제안.일반_코칭.map(
-                      (coaching, index) => (
+                      (coaching: any, index: any) => (
                         <tr
                           key={index}
                           className={`
@@ -968,7 +973,7 @@ const TeamFeedbackReport = () => {
                   </thead>
                   <tbody>
                     {teamFeedbackReport.팀원별_코칭_제안.집중_코칭.map(
-                      (coaching, index) => (
+                      (coaching: any, index: any) => (
                         <tr
                           key={index}
                           className={`
@@ -1011,7 +1016,7 @@ const TeamFeedbackReport = () => {
             </h2>
 
             {teamFeedbackReport.리스크_및_향후_운영_제안.주요_리스크.map(
-              (risk, index) => (
+              (risk: any, index: any) => (
                 <div
                   key={index}
                   className={`rounded-xl p-6 border mb-6 ${getRiskColor(
@@ -1045,7 +1050,7 @@ const TeamFeedbackReport = () => {
                         <td className="py-2 font-semibold">발생 원인</td>
                         <td className="py-2">
                           <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
-                            {risk['발생_원인'].map((cause, idx) => (
+                            {risk['발생_원인'].map((cause: any, idx: any) => (
                               <li key={idx}>{cause}</li>
                             ))}
                           </ul>
