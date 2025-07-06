@@ -83,7 +83,7 @@ const ProgressBar: React.FC<{ percentage: number; className?: string }> = ({
   <div className={`w-full bg-gray-200 rounded-full h-3 ${className}`}>
     <div
       className="bg-blue-500 h-3 rounded-full transition-all duration-300"
-      style={{ width: `${percentage}%` }}
+      style={{ width: `${percentage > 100 ? 100 : percentage}%` }}
     />
   </div>
 )

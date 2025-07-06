@@ -89,7 +89,13 @@ const Evaluations = () => {
               <div className="w-3/4 bg-gray-200 rounded-full h-2">
                 <div
                   className="bg-blue-500 h-2 rounded-full"
-                  style={{ width: `${evaluation.averageAchievementRate}%` }}
+                  style={{
+                    width: `${
+                      evaluation.averageAchievementRate > 100
+                        ? 100
+                        : evaluation.averageAchievementRate
+                    }%`,
+                  }}
                 ></div>
               </div>
               <span className="text-sm text-gray-600">
