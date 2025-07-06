@@ -29,7 +29,7 @@ const Header: React.FC<HeaderProps> = ({
         <div className="text-left">
           <div className={styles.textSemibold}>{currentUser.empName}</div>
           <div className={styles.textSmall}>
-            {currentUser.headquarterName} {currentUser.position}
+            {currentUser.teamName} {currentUser.position}
           </div>
         </div>
       </div>
