@@ -3,10 +3,9 @@ import { Header } from '../components/common'
 import useDocumentTitle from '../hooks/useDocumentTitle'
 import { MemberReportContent } from '../components/memberReportPage'
 import { useEffect, useState } from 'react'
-import ReportService from '../services/ReportService'
 
 const MemberReportPage: React.FC = () => {
-  useDocumentTitle('분기별 피드백 - SKoro')
+  useDocumentTitle('팀원 분기별 피드백 - SKoro')
 
   const location = useLocation()
   const member = location.state?.member || memberDummy
