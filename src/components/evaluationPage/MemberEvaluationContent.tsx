@@ -3,9 +3,13 @@ import { Report } from '../common'
 import { ScoreEvaluation, TeamList } from '../evaluationPage'
 import { useLocation } from 'react-router-dom'
 
-const MemberEvaluationContent: React.FC = () => {
+const MemberEvaluationContent: React.FC<{
+  setIsCompleted?: (isCompleted: boolean) => void
+}> = () => {
   const location = useLocation()
   const [tempEvaluations, setTempEvaluations] = useState<any[]>([])
+
+  const [isValidFinalSubmit, setIsValidFinalSubmit] = useState(false)
 
   const [member, periodId, teamEvaluationId, evaluationReasons] = location.state
     ? [
@@ -25,6 +29,7 @@ const MemberEvaluationContent: React.FC = () => {
         teamEvaluationId={teamEvaluationId}
         isSubmitted={isSubmitted}
         setIsSubmitted={setIsSubmitted}
+        setIsValidFinalSubmit={setIsValidFinalSubmit}
       />
 
       <main className="min-h-0 flex-1 flex flex-col lg:flex-row pb-5 px-10 min-h-0 min-h-[fit-content] lg:min-h-0">
@@ -35,6 +40,7 @@ const MemberEvaluationContent: React.FC = () => {
           evaluationReasons={evaluationReasons}
         />
         <ScoreEvaluation
+          isValidFinalSubmit={isValidFinalSubmit}
           memberEmpNo={member.empNo}
           tempEvaluations={tempEvaluations}
           setIsSubmitted={setIsSubmitted}
