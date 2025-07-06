@@ -9,11 +9,13 @@ import {
 } from 'lucide-react'
 import { SKLogoWhite } from '../../assets/common'
 
-const MemberFinalReportCmp = () => {
+const MemberFinalReportCmp: React.FC<{
+  report: any
+}> = ({ report }) => {
   const [activeSection, setActiveSection] = useState('basic-info')
 
   // JSON 데이터
-  const memberFinalReport = {
+  const dummyMemberFinalReport = {
     기본_정보: {
       성명: '박DB',
       직위: 'CL3',
@@ -111,6 +113,7 @@ const MemberFinalReportCmp = () => {
     종합_Comment:
       '박DB님, 이번 평가 기간 동안 보여주신 성과에 대해 진심으로 축하드립니다. AI 학습 데이터 DB 구조를 85% 완성하며 책임감과 성실함을 발휘하신 점은 특히 인상적이었습니다. 팀 내에서 3위의 달성률(74%)을 기록하며 기여도 20%를 달성하신 것은 귀하의 노력과 협업 능력을 잘 보여줍니다. \n\n다만, 프로젝트 진행 중 일부 상황에서 회피형 태도가 나타난 점은 개선이 필요합니다. 보다 적극적인 참여와 소통을 통해 팀의 목표 달성에 기여할 수 있는 기회를 늘려가시길 바랍니다. \n\n향후, 협업 편중도를 줄이고 다양한 의견을 수렴하는 데 집중하신다면 더욱 효과적인 팀워크를 이끌어낼 수 있을 것입니다. 지속적인 성장과 발전을 기대하며, 앞으로의 여정에 응원과 지지를 보냅니다.',
   }
+  const memberFinalReport = report || dummyMemberFinalReport
 
   // 목차 데이터
   const tableOfContents = [
@@ -366,7 +369,7 @@ const MemberFinalReportCmp = () => {
                 </thead>
                 <tbody>
                   {memberFinalReport.분기별_업무_기여도.map(
-                    (quarter, index) => (
+                    (quarter: any, index: any) => (
                       <tr
                         key={quarter.분기}
                         className={`hover:bg-gray-50 transition-colors duration-200 
@@ -439,7 +442,7 @@ const MemberFinalReportCmp = () => {
                 </thead>
                 <tbody>
                   {memberFinalReport.팀_업무_목표_및_개인_달성률.업무표.map(
-                    (task, index) => (
+                    (task: any, index: number) => (
                       <tr
                         key={task.Task명}
                         className={`hover:bg-gray-50 transition-colors duration-200 
