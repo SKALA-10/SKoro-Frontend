@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Edit2, X } from 'lucide-react'
 import EvaluationService from '../../services/EvaluationService'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const ScoreEvaluation: React.FC<{
   memberEmpNo?: string
   tempEvaluations: any[]
   setIsSubmitted: (isSubmitted: boolean) => void
-}> = ({ memberEmpNo, tempEvaluations, setIsSubmitted }) => {
+  isValidFinalSubmit?: boolean
+}> = ({ memberEmpNo, tempEvaluations, setIsSubmitted, isValidFinalSubmit }) => {
   const location = useLocation()
+  const navigate = useNavigate()
   const member = location.state?.member
 
   const teamEvaluationId = location.state?.teamEvaluationId || null
@@ -35,6 +37,11 @@ const ScoreEvaluation: React.FC<{
     setEditReason('')
     setFinalScore(recommendEvaluation?.score || 0)
     setEditScore(recommendEvaluation?.score || 0)
+    setOriginalEvaluation({
+      score: recommendEvaluation?.score || 0,
+      comment: recommendEvaluation?.comment || '',
+      reason: recommendEvaluation?.reason || '',
+    })
   }, [recommendEvaluation])
 
   const [isEditing, setIsEditing] = useState(false)
@@ -83,6 +90,11 @@ const ScoreEvaluation: React.FC<{
         setEditScore(tempEvaluation.score)
         setFinalComment(tempEvaluation.comment || '')
         setEditReason(tempEvaluation.reason || '')
+        setOriginalEvaluation({
+          score: tempEvaluation?.score || 0,
+          comment: tempEvaluation?.comment || '',
+          reason: tempEvaluation?.reason || '',
+        })
       }
     }
   }, [member, tempEvaluations])
@@ -116,16 +128,7 @@ const ScoreEvaluation: React.FC<{
 
   const isValidScoreBlock = !isScoreChanged || (isScoreChanged && isReasonValid)
 
-  const isFormChanged =
-    isScoreChanged ||
-    editReason.trim() !== originalEvaluation?.reason.trim() ||
-    isCommentChanged
-
-  const isFormValid =
-    !!editScore &&
-    finalComment.trim().length > 0 &&
-    isValidScoreBlock &&
-    isFormChanged
+  const isFormValid = isValidScoreBlock && isCommentChanged
 
   const handleSaveEvaluation = () => {
     if (isFormValid) {
@@ -152,6 +155,25 @@ const ScoreEvaluation: React.FC<{
         })
     } else {
       console.error('유효하지 않은 폼 데이터입니다.')
+    }
+  }
+
+  // 최종 제출 버튼 클릭 시
+  const handleFinalSubmit = () => {
+    if (isValidFinalSubmit) {
+      EvaluationService.submitTeamEvaluation(teamEvaluationId)
+        .then(() => {
+          console.log('최종 제출이 성공적으로 완료되었습니다.')
+          setIsSubmitted(true)
+          navigate('/evaluation', {
+            state: { periodId, teamEvaluationId, memberEmpNo },
+          }) // 평가 완료 페이지로 이동
+        })
+        .catch((error: any) => {
+          console.error('최종 제출 중 오류 발생:', error)
+        })
+    } else {
+      console.error('최종 제출이 유효하지 않습니다.')
     }
   }
 
@@ -248,7 +270,15 @@ const ScoreEvaluation: React.FC<{
         >
           평가 저장하기
         </button>
-        <button className="flex-1 py-3 px-4 rounded-xl font-medium bg-gray-500 hover:bg-gray-600 text-white transition-colors h-12 mt-auto">
+        <button
+          onClick={handleFinalSubmit}
+          disabled={!isValidFinalSubmit}
+          className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all h-12 mt-auto ${
+            isValidFinalSubmit
+              ? 'bg-green-500 hover:bg-green-600 text-white shadow-sm'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          }`}
+        >
           최종 제출
         </button>
       </div>
