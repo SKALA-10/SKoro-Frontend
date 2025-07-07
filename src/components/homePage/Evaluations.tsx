@@ -61,7 +61,7 @@ const Evaluations = () => {
                     }
                   >
                     {evaluation.relativePerformance > 0 ? '+' : ''}
-                    {evaluation.relativePerformance}%
+                    {evaluation.relativePerformance}
                   </span>
                 </div>
 
@@ -75,7 +75,7 @@ const Evaluations = () => {
                     }
                   >
                     {evaluation.yearOverYearGrowth > 0 ? '+' : ''}
-                    {evaluation.yearOverYearGrowth}%
+                    {evaluation.yearOverYearGrowth}
                   </span>
                 </div>
               </div>
