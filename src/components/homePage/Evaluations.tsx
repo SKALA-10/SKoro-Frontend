@@ -75,7 +75,7 @@ const Evaluations = () => {
                     }
                   >
                     {evaluation.yearOverYearGrowth > 0 ? '+' : ''}
-                    {evaluation.yearOverYearGrowth}
+                    {evaluation.yearOverYearGrowth}%
                   </span>
                 </div>
               </div>
