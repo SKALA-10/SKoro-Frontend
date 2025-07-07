@@ -95,9 +95,7 @@ const Report: React.FC<FeedbackReportProps> = ({
           })
           .catch((error) => {
             console.error('팀 중간 평가 레포트 조회 실패:', error)
-            setReportContent(
-              '팀 중간 평가 레포트 내용을 불러오는 데 실패했습니다.'
-            )
+            setReportContent(null)
           })
     } else if (type === 'memberEvaluation') {
     } else if (type != 'feedback') {
@@ -148,6 +146,7 @@ const Report: React.FC<FeedbackReportProps> = ({
           })
           .catch((error) => {
             console.error('최종 평가 레포트 조회 실패:', error)
+            setReportContent(null)
           })
       } else {
         // [팀장] 해당 기간의 팀원의 분기 평가 레포트 조회
@@ -161,9 +160,7 @@ const Report: React.FC<FeedbackReportProps> = ({
           })
           .catch((error) => {
             console.error('개인 분기별 레포트 조회 실패:', error)
-            setReportContent(
-              '개인 분기별 레포트 내용을 불러오는 데 실패했습니다.'
-            )
+            setReportContent(null)
           })
       }
     } else if (type === 'feedback') {
@@ -177,9 +174,7 @@ const Report: React.FC<FeedbackReportProps> = ({
           })
           .catch((error) => {
             console.error('팀 평가 레포트 조회 실패:', error)
-            setReportContent(
-              '팀 분기별 레포트 내용을 불러오는 데 실패했습니다.'
-            )
+            setReportContent(null)
           })
       } else {
         // 해당 기간의 본인의 분기 평가 레포트 조회
@@ -192,7 +187,7 @@ const Report: React.FC<FeedbackReportProps> = ({
           })
           .catch((error) => {
             console.error('분기별 레포트 조회 실패:', error)
-            setReportContent('')
+            setReportContent(null)
           })
       }
     } else {
@@ -204,9 +199,7 @@ const Report: React.FC<FeedbackReportProps> = ({
           })
           .catch((error) => {
             console.error('팀 평가 레포트 조회 실패:', error)
-            setReportContent(
-              '팀 분기별 레포트 내용을 불러오는 데 실패했습니다.'
-            )
+            setReportContent(null)
           })
         if (role === 'MANAGER') {
           ReportService.getEvaluationFeedbackSummary(
@@ -230,14 +223,12 @@ const Report: React.FC<FeedbackReportProps> = ({
           .then((report) => {
             console.log('최종 평가 레포트 조회 성공:', report)
             setReportContent(
-              report.report || '개인 최종 평가 레포트 내용이 없습니다.'
+              report.report || null
             )
           })
           .catch((error) => {
             console.error('최종 평가 레포트 조회 실패:', error)
-            setReportContent(
-              '개인 최종 평가 레포트 내용을 불러오는 데 실패했습니다.'
-            )
+            setReportContent(null)
           })
       }
     }
