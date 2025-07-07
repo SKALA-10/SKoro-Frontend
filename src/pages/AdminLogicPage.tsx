@@ -44,7 +44,7 @@ const AdminLogicPage: React.FC = () => {
   const handleEditLogic = () => {
     AdminService.savePrompt(logic)
       .then(() => {
-        alert('성과평가 로직이 성공적으로 수정되었습니다.')
+        //alert('성과평가 로직이 성공적으로 수정되었습니다.')
       })
       .catch((error) => {
         console.error('Error updating prompts:', error)

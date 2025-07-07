@@ -171,7 +171,7 @@ const AdminPage: React.FC = () => {
         setKpiGeneratedYear(currentYear)
         setIsGeneratingKPI(false)
         setIsKpiGenerated(true)
-        alert('팀 KPI가 성공적으로 생성되었습니다!')
+        //alert('팀 KPI가 성공적으로 생성되었습니다!')
       })
       .catch((error) => {
         console.error('팀 KPI 생성 실패:', error)
@@ -211,7 +211,7 @@ const AdminPage: React.FC = () => {
     }
 
     setEvaluationPeriods((prev) => [...prev, newEvaluation])
-    alert('평가가 성공적으로 생성되었습니다!')
+    //alert('평가가 성공적으로 생성되었습니다!')
   }
 
   // 다음 평가 단계로 전환

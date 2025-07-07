@@ -70,7 +70,7 @@ const PeerEvaluation: React.FC<{
       customKeywords
     )
       .then(() => {
-        alert('평가가 성공적으로 제출되었습니다.')
+        //alert('평가가 성공적으로 제출되었습니다.')
         setIsSubmitted(true)
       })
       .catch((error) => {
